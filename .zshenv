@@ -15,3 +15,11 @@ export HTTPS_PROXY=http://$(hostname).local:7897
 # nvm mirror
 ## https://mirrors.tuna.tsinghua.edu.cn/help/nodejs-release/
 export NVM_NODEJS_ORG_MIRROR=https://mirrors.tuna.tsinghua.edu.cn/nodejs-release/
+
+# pnpm
+export PNPM_HOME="/home/ye/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end

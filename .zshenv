@@ -1,4 +1,4 @@
-source ./.proxyenv
+source $HOME/.proxyenv
 
 alias dgit='/usr/bin/git --git-dir=/home/ye/.cfg/ --work-tree=/home/ye'
 

@@ -32,20 +32,14 @@ dgit push
 
 ## Installing your dotfiles onto a new system (or migrate to this setup)
 
+First install `zsh` and `oh-my-zsh`, install plugin `zsh-autosuggestions` and `zsh-syntax-highlighting`.
+
+Then clone your dotfiles into a bare repository on a new system using the technique above. And then checkout the actual content from the bare repository to your $HOME:
 
 ```bash
-git clone --bare https://bitbucket.org/durdn/cfg.git $HOME/.cfg
-function config {
-   /usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME $@
-}
-mkdir -p .config-backup
-config checkout
-if [ $? = 0 ]; then
-  echo "Checked out config.";
-  else
-    echo "Backing up pre-existing dot files.";
-    config checkout 2>&1 | egrep "\s+\." | awk {'print $1'} | xargs -I{} mv {} .config-backup/{}
-fi;
-config checkout
-config config status.showUntrackedFiles no
+echo ".cfg" >> .gitignore
+git clone --bare git@github.com:Yesifan/dotfile.git $HOME/.cfg
+alias dgit='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+dgit checkout -f
 ```
+

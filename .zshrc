@@ -103,5 +103,9 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-export PROMPT="%{$fg[cyan]%}$USER@$(hostname)%{$reset_color%} %(?:%{$fg_bold[green]%}%1{➜%} :%{$fg_bold[red]%}%1{➜%} ) %{$fg[cyan]%}%c%{$reset_color%}"
-PROMPT+=' $(git_prompt_info)'
+# 服务器启用，显示服务器名称
+# export PROMPT="%{$fg[cyan]%}$USER@$(hostname)%{$reset_color%} %(?:%{$fg_bold[green]%}%1{➜%} :%{$fg_bold[red]%}%1{➜%} ) %{$fg[cyan]%}%c%{$reset_color%}"
+# PROMPT+=' $(git_prompt_info)'
+#
+# Only for macOS
+alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"

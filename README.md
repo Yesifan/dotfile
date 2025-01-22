@@ -43,3 +43,5 @@ alias dgit='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 dgit checkout -f
 ```
 
+### For vim
+[The Ultimate vimrc](https://github.com/amix/vimrc)

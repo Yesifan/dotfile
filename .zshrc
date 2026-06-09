@@ -6,6 +6,15 @@ alias dgit='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 # Machine-local aliases. This file is intentionally not tracked.
 [[ -f "$HOME/.zshalias" ]] && source "$HOME/.zshalias"
 
+# Prefix history search with up/down arrows.
+autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey '^[[A' up-line-or-beginning-search
+bindkey '^[[B' down-line-or-beginning-search
+bindkey '^[OA' up-line-or-beginning-search
+bindkey '^[OB' down-line-or-beginning-search
+
 # zoxide: smarter directory jumping.
 command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
 
@@ -41,3 +50,28 @@ if [[ -n "$PNPM_HOME" && -d "$PNPM_HOME" ]]; then
     *) export PATH="$PNPM_HOME:$PATH" ;;
   esac
 fi
+
+# Autosuggestions.
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
+for autosuggest_file in \
+  /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
+  /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
+  /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
+  /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh; do
+  if [[ -r "$autosuggest_file" ]]; then
+    source "$autosuggest_file"
+    break
+  fi
+done
+
+# Syntax highlighting should be loaded at the end of .zshrc.
+for syntax_highlight_file in \
+  /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+  /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+  /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+  /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh; do
+  if [[ -r "$syntax_highlight_file" ]]; then
+    source "$syntax_highlight_file"
+    break
+  fi
+done

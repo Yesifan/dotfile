@@ -11,6 +11,9 @@ The interactive shell setup uses:
 - `starship` for the prompt
 - `zoxide` for directory jumping
 - `fzf` for fuzzy search and shell key bindings
+- `zsh-autosuggestions` for gray inline history suggestions
+- `zsh-syntax-highlighting` for realtime command-line highlighting
+- `tmux` for terminal multiplexing
 - Ghostty with a shared XDG config at `~/.config/ghostty/config.ghostty`
 
 All optional tool initialization in `.zshrc` is guarded with `command -v` or
@@ -22,33 +25,73 @@ installed.
 macOS with Homebrew:
 
 ```zsh
-brew install starship zoxide fzf
+brew install starship zoxide fzf zsh-autosuggestions zsh-syntax-highlighting tmux
 ```
 
 Debian or Ubuntu:
 
 ```zsh
 sudo apt update
-sudo apt install zsh fzf
+sudo apt install zsh fzf tmux zsh-autosuggestions zsh-syntax-highlighting
 ```
 
 Install `starship` and `zoxide` from your package manager if available, or use
 their official installers. If you use Linuxbrew, the same Homebrew command works:
 
 ```zsh
-brew install starship zoxide fzf
+brew install starship zoxide fzf zsh-autosuggestions zsh-syntax-highlighting tmux
 ```
 
 Fedora:
 
 ```zsh
-sudo dnf install zsh starship zoxide fzf
+sudo dnf install zsh starship zoxide fzf tmux zsh-autosuggestions zsh-syntax-highlighting
 ```
 
 Arch Linux:
 
 ```zsh
-sudo pacman -S zsh starship zoxide fzf
+sudo pacman -S zsh starship zoxide fzf tmux zsh-autosuggestions zsh-syntax-highlighting
+```
+
+## Shell Behavior
+
+The zsh config keeps startup portable by checking whether optional tools or
+plugin files exist before loading them.
+
+- Type a prefix such as `ls`, then press Up or Down to search only matching
+  history entries.
+- `zsh-autosuggestions` shows gray inline suggestions from history.
+- `zsh-syntax-highlighting` highlights commands as you type.
+- `zoxide` provides `z` and `zi` for directory jumping.
+- `fzf` provides fuzzy search integrations in real terminal sessions.
+
+## Starship
+
+Starship uses the tracked config at:
+
+```text
+~/.config/starship.toml
+```
+
+Local shells keep the prompt clean. SSH sessions show the short hostname at the
+front of the prompt by checking `SSH_CONNECTION` or `SSH_TTY`.
+
+## tmux
+
+The tracked tmux config is:
+
+```text
+~/.tmux.conf
+```
+
+It keeps the default prefix `C-b`, enables mouse support, uses 1-based
+window/pane numbering, keeps a larger scrollback, and supports:
+
+```text
+C-b r  reload ~/.tmux.conf
+C-b |  split horizontally
+C-b -  split vertically
 ```
 
 ## Local-Only Files
@@ -104,6 +147,8 @@ Only add explicit files when committing. Do not use `dgit add -u`:
 dgit add ~/.zshrc
 dgit add ~/.zshenv
 dgit add ~/.config/ghostty/config.ghostty
+dgit add ~/.config/starship.toml
+dgit add ~/.tmux.conf
 dgit add ~/README.md
 dgit commit -m "Update dotfiles"
 dgit push origin main

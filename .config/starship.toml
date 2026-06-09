@@ -1,0 +1,7 @@
+format = "$custom.remote$all"
+
+[custom.remote]
+command = "hostname -s"
+when = 'test -n "$SSH_CONNECTION$SSH_TTY"'
+format = "[$output]($style) "
+style = "bold yellow"

@@ -257,6 +257,10 @@ dgit diff
 dgit stash push -m "local server changes"
 dgit pull origin main
 dgit stash pop
+# or use rebase
+dgit pull --rebase origin main
+# 它会把你的本地提交“挪到”远程最新提交后面，历史更干净：
+# A---B'---C''
 ```
 
 After updating, install any missing tools for that platform. On Ubuntu, the apt

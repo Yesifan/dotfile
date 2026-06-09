@@ -20,7 +20,12 @@ command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
 
 # fzf: fuzzy finder shell integration for real terminal sessions.
 if command -v fzf >/dev/null 2>&1 && [[ -t 0 ]]; then
-  source <(fzf --zsh)
+  if fzf --zsh >/dev/null 2>&1; then
+    source <(fzf --zsh)
+  else
+    [[ -r /usr/share/doc/fzf/examples/key-bindings.zsh ]] && source /usr/share/doc/fzf/examples/key-bindings.zsh
+    [[ -r /usr/share/doc/fzf/examples/completion.zsh ]] && source /usr/share/doc/fzf/examples/completion.zsh
+  fi
 fi
 
 # starship: prompt.

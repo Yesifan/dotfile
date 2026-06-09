@@ -14,6 +14,8 @@ The interactive shell setup uses:
 - `zsh-autosuggestions` for gray inline history suggestions
 - `zsh-syntax-highlighting` for realtime command-line highlighting
 - `tmux` for terminal multiplexing
+- `git-delta` for readable `git diff` and `git show`
+- Vim with tracked config at `~/.vimrc`
 - Ghostty with a shared XDG config at `~/.config/ghostty/config.ghostty`
 
 All optional tool initialization in `.zshrc` is guarded with `command -v` or
@@ -25,33 +27,34 @@ installed.
 macOS with Homebrew:
 
 ```zsh
-brew install starship zoxide fzf zsh-autosuggestions zsh-syntax-highlighting tmux
+brew install starship zoxide fzf zsh-autosuggestions zsh-syntax-highlighting tmux git-delta
 ```
 
 Debian or Ubuntu:
 
 ```zsh
 sudo apt update
-sudo apt install zsh fzf tmux zsh-autosuggestions zsh-syntax-highlighting
+sudo apt install zsh fzf tmux zsh-autosuggestions zsh-syntax-highlighting git-delta vim
 ```
 
-Install `starship` and `zoxide` from your package manager if available, or use
-their official installers. If you use Linuxbrew, the same Homebrew command works:
+Install `starship`, `zoxide`, and `git-delta` from your package manager if
+available, or use their official release packages. If you use Linuxbrew, the
+same Homebrew command works:
 
 ```zsh
-brew install starship zoxide fzf zsh-autosuggestions zsh-syntax-highlighting tmux
+brew install starship zoxide fzf zsh-autosuggestions zsh-syntax-highlighting tmux git-delta
 ```
 
 Fedora:
 
 ```zsh
-sudo dnf install zsh starship zoxide fzf tmux zsh-autosuggestions zsh-syntax-highlighting
+sudo dnf install zsh starship zoxide fzf tmux zsh-autosuggestions zsh-syntax-highlighting git-delta vim
 ```
 
 Arch Linux:
 
 ```zsh
-sudo pacman -S zsh starship zoxide fzf tmux zsh-autosuggestions zsh-syntax-highlighting
+sudo pacman -S zsh starship zoxide fzf tmux zsh-autosuggestions zsh-syntax-highlighting git-delta vim
 ```
 
 ## Shell Behavior
@@ -64,7 +67,32 @@ plugin files exist before loading them.
 - `zsh-autosuggestions` shows gray inline suggestions from history.
 - `zsh-syntax-highlighting` highlights commands as you type.
 - `zoxide` provides `z` and `zi` for directory jumping.
-- `fzf` provides fuzzy search integrations in real terminal sessions.
+- `fzf` provides fuzzy search integrations in real terminal sessions. New fzf
+  uses `fzf --zsh`; older Ubuntu packages fall back to bundled example scripts.
+
+## Git
+
+Shared Git behavior lives in:
+
+```text
+~/.config/git/config
+```
+
+Personal identity stays local in `~/.gitconfig` and is not committed. The shared
+config uses `git-delta` as the pager for readable `git diff` and `git show`
+output. Install `git-delta` before using this config on a new machine.
+
+## Vim
+
+Tracked Vim config lives in:
+
+```text
+~/.vimrc
+```
+
+The Vim config is intentionally lightweight: no plugin manager, cross-platform
+clipboard defaults, line numbers, persistent undo, sane search behavior, and
+basic filetype indentation.
 
 ## Starship
 
@@ -145,8 +173,10 @@ Only add explicit files when committing. Do not use `dgit add -u`:
 ```zsh
 dgit add ~/.zshrc
 dgit add ~/.zshenv
+dgit add ~/.config/git/config
 dgit add ~/.config/ghostty/config.ghostty
 dgit add ~/.config/starship.toml
+dgit add ~/.vimrc
 dgit add ~/.tmux.conf
 dgit add ~/README.md
 dgit commit -m "Update dotfiles"
@@ -163,8 +193,41 @@ dgit diff --cached --name-only
 ```
 
 Do not commit private keys, tokens, cookies, credentials, `.proxyenv`,
-`.zprofile`, `.zshalias`, or machine-specific SSH host metadata unless you have
-reviewed it intentionally.
+`.zprofile`, `.zshalias`, `.gitconfig`, or machine-specific SSH host
+metadata unless you have reviewed it intentionally.
+
+## 更新引导
+
+On a server that already has an older checkout of these dotfiles:
+
+```zsh
+alias dgit='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+dgit status
+dgit pull origin main
+```
+
+If the server has local changes, inspect and stash them before pulling:
+
+```zsh
+dgit diff
+dgit stash push -m "local server changes"
+dgit pull origin main
+dgit stash pop
+```
+
+After updating, install any missing tools for that platform. On Ubuntu, the apt
+`fzf` package may be older and not support `fzf --zsh`; `.zshrc` falls back to
+the package's example scripts when available.
+
+If the server still has old oh-my-zsh files and the current `.zshrc` no longer
+references them, remove them:
+
+```zsh
+rm -rf ~/.oh-my-zsh ~/.cache/oh-my-zsh ~/.zcompdump*
+```
+
+The tracked `~/.vimrc` is the Vim entrypoint; no symlink is required.
+
 
 ## Ghostty
 

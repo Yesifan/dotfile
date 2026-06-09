@@ -74,8 +74,7 @@ Starship uses the tracked config at:
 ~/.config/starship.toml
 ```
 
-Local shells keep the prompt clean. SSH sessions show the short hostname at the
-front of the prompt by checking `SSH_CONNECTION` or `SSH_TTY`.
+The config keeps Starship close to its defaults and does not add a local/remote host indicator.
 
 ## tmux
 

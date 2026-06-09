@@ -1,10 +1,13 @@
+# Local interactive zsh config example.
+# Copy to ~/.config/zsh/.zshrc.local and edit for this machine.
+
 # clash proxy
 export http_proxy=http://$(hostname).local:7897
 export https_proxy=http://$(hostname).local:7897
 export HTTP_PROXY=http://$(hostname).local:7897
 export HTTPS_PROXY=http://$(hostname).local:7897
-# ## 因为不知道其他哪个地方设置了 http_proxy，https_proxy
-# ## 所以在这里删除
+
+# If another tool sets proxy variables and you need to clear them, uncomment:
 # unset http_proxy
 # unset https_proxy
 # unset HTTP_PROXY

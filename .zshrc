@@ -3,5 +3,5 @@
 # machine-local setup below; avoid committing those generated blocks.
 
 [[ -r "$HOME/.config/zsh/zshrc" ]] && source "$HOME/.config/zsh/zshrc"
-[[ -r "$HOME/.config/zsh/local.zsh" ]] && source "$HOME/.config/zsh/local.zsh"
+[[ -r "$HOME/.config/zsh/.zshrc.local" ]] && source "$HOME/.config/zsh/.zshrc.local"
 [[ -r "$HOME/.zshalias" ]] && source "$HOME/.zshalias"

@@ -65,9 +65,6 @@ sudo pacman -S zsh starship zoxide fzf tmux zsh-autosuggestions zsh-syntax-highl
 Shell files are split by responsibility:
 
 ```text
-~/.zshenv
-  Minimal environment loaded by every zsh process. Keep this very small.
-
 ~/.zprofile
   Login shell setup such as Homebrew/Linuxbrew shellenv. Local-only, not tracked.
 
@@ -79,9 +76,12 @@ Shell files are split by responsibility:
   Tracked cross-platform interactive shell config: dgit, history search, fzf,
   zoxide, starship, pnpm, nvm guards, autosuggestions, and syntax highlighting.
 
-~/.config/zsh/local.zsh
+~/.config/zsh/.zshrc.local
   Optional local-only config for private paths, host aliases, proxies, and
   machine-specific tool setup. Not tracked.
+
+~/.config/zsh/.zshrc.local.example
+  Tracked example for the local-only interactive config.
 
 ~/.zshalias
   Legacy local-only alias file. Still sourced if present, not tracked.
@@ -171,10 +171,11 @@ elif [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
 fi
 ```
 
-`~/.config/zsh/local.zsh` is intentionally not tracked. Prefer it for
+`~/.config/zsh/.zshrc.local` is intentionally not tracked. Prefer it for
 machine-local setup that should run in interactive shells:
 
 ```zsh
+cp ~/.config/zsh/.zshrc.local.example ~/.config/zsh/.zshrc.local
 [[ -x /Applications/Tailscale.app/Contents/MacOS/Tailscale ]] && alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
 ```
 
@@ -214,8 +215,8 @@ Only add explicit files when committing. Do not use `dgit add -u`:
 
 ```zsh
 dgit add ~/.zshrc
-dgit add ~/.zshenv
 dgit add ~/.config/zsh/zshrc
+dgit add ~/.config/zsh/.zshrc.local.example
 dgit add ~/.config/git/config
 dgit add ~/.config/ghostty/config.ghostty
 dgit add ~/.config/starship.toml
@@ -236,7 +237,7 @@ dgit diff --cached --name-only
 ```
 
 Do not commit private keys, tokens, cookies, credentials, `.proxyenv`,
-`.zprofile`, `.zshalias`, `.config/zsh/local.zsh`, `.gitconfig`, or
+`.zprofile`, `.zshalias`, `.config/zsh/.zshrc.local`, `.gitconfig`, or
 machine-specific SSH host metadata unless you have reviewed it intentionally.
 
 ## 更新引导

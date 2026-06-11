@@ -74,13 +74,13 @@ Shell files are split by responsibility:
 
 ~/.config/zsh/zshrc
   Tracked cross-platform interactive shell config: dgit, history search, fzf,
-  zoxide, starship, pnpm, nvm guards, autosuggestions, and syntax highlighting.
+  zoxide, starship, history, completion, autosuggestions, and syntax highlighting.
 
-~/.config/zsh/.zshrc.local
+~/.config/zsh/zshrc.local
   Optional local-only config for private paths, host aliases, proxies, and
   machine-specific tool setup. Not tracked.
 
-~/.config/zsh/.zshrc.local.example
+~/.config/zsh/zshrc.local.example
   Tracked example for the local-only interactive config.
 
 ~/.zshalias
@@ -97,6 +97,11 @@ When a setup block is useful everywhere, move a guarded version into
 The shared zsh config keeps startup portable by checking whether optional tools
 or plugin files exist before loading them.
 
+- History is persisted in `~/.zsh_history` with a larger limit, incremental
+  append, shared history across terminals, duplicate reduction, and leading
+  space exclusion.
+- The zsh completion system is initialized with `compinit`, menu selection,
+  case-insensitive matching, and grouped completion output.
 - Type a prefix such as `ls`, then press Up or Down to search only matching
   history entries.
 - `zsh-autosuggestions` shows gray inline suggestions from history.
@@ -171,13 +176,24 @@ elif [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
 fi
 ```
 
-`~/.config/zsh/.zshrc.local` is intentionally not tracked. Prefer it for
+`~/.config/zsh/zshrc.local` is intentionally not tracked. Prefer it for
 machine-local setup that should run in interactive shells:
 
 ```zsh
-cp ~/.config/zsh/.zshrc.local.example ~/.config/zsh/.zshrc.local
+cp ~/.config/zsh/zshrc.local.example ~/.config/zsh/zshrc.local
 [[ -x /Applications/Tailscale.app/Contents/MacOS/Tailscale ]] && alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
 ```
+
+Use `~/.npmrc` for npm-specific configuration such as registry URLs, npm cache
+location, `save-exact`, strict SSL behavior, and package-manager authentication
+tokens. Do not put general shell exports or aliases there.
+
+Use `~/.config/zsh/zshrc.local` for interactive shell behavior: aliases,
+machine-specific `PATH` entries, proxy exports, local app paths, host shortcuts,
+or guarded initialization for tools that are not shared across every machine,
+such as `nvm`, `pnpm`, `uv`, `pyenv`, `cargo`, or app-specific CLIs. Keep
+credentials out of tracked files; if a token must exist locally, prefer the
+tool's own private config file such as `~/.npmrc`.
 
 `~/.zshalias` is intentionally not tracked. Use it for machine-local aliases,
 private paths, proxy helpers, host shortcuts, and app-specific commands:
@@ -216,7 +232,7 @@ Only add explicit files when committing. Do not use `dgit add -u`:
 ```zsh
 dgit add ~/.zshrc
 dgit add ~/.config/zsh/zshrc
-dgit add ~/.config/zsh/.zshrc.local.example
+dgit add ~/.config/zsh/zshrc.local.example
 dgit add ~/.config/git/config
 dgit add ~/.config/ghostty/config.ghostty
 dgit add ~/.config/starship.toml
@@ -237,7 +253,7 @@ dgit diff --cached --name-only
 ```
 
 Do not commit private keys, tokens, cookies, credentials, `.proxyenv`,
-`.zprofile`, `.zshalias`, `.config/zsh/.zshrc.local`, `.gitconfig`, or
+`.zprofile`, `.zshalias`, `.config/zsh/zshrc.local`, `.gitconfig`, or
 machine-specific SSH host metadata unless you have reviewed it intentionally.
 
 ## 更新引导

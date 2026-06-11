@@ -3,6 +3,32 @@
 # Dotfiles bare repository helper.
 alias dgit='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 
+# History.
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=100000
+SAVEHIST=100000
+
+setopt append_history
+setopt inc_append_history
+setopt share_history
+setopt extended_history
+setopt hist_ignore_dups
+setopt hist_ignore_space
+setopt hist_reduce_blanks
+setopt hist_verify
+
+# Completion.
+autoload -Uz compinit
+if [[ -n "${ZDOTDIR:-}" ]]; then
+  compinit -d "$ZDOTDIR/.zcompdump"
+else
+  compinit -d "$HOME/.zcompdump"
+fi
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' group-name ''
+
 # Prefix history search with up/down arrows.
 autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
 zle -N up-line-or-beginning-search

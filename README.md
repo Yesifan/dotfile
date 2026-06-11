@@ -153,13 +153,30 @@ The tracked tmux config is:
 ```
 
 It keeps the default prefix `C-b`, enables mouse support, uses 1-based
-window/pane numbering, keeps a larger scrollback, and supports:
+window/pane numbering, keeps a larger scrollback, and supports OSC 52 clipboard
+copy through SSH/Ghostty:
 
 ```text
 C-b r  reload ~/.tmux.conf
 C-b |  split horizontally
 C-b -  split vertically
+C-b [  enter copy mode, then y copies selection to clipboard
 ```
+
+After updating a server, reload tmux:
+
+```zsh
+tmux source-file ~/.tmux.conf
+```
+
+If clipboard copy works over SSH outside tmux but fails inside tmux, verify OSC
+52 forwarding inside tmux:
+
+```zsh
+printf '\e]52;c;%s\a' "$(printf 'tmux-copy-test' | base64 | tr -d '\n')"
+```
+
+Then paste locally and confirm the clipboard contains `tmux-copy-test`.
 
 ## Local-Only Files
 

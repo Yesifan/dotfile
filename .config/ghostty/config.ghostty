@@ -1,6 +1,7 @@
 # Shared Ghostty configuration for macOS and Linux.
 
-theme = light:GitHub Light Default,dark:GitHub Dark Default
+theme = dark:Catppuccin Mocha,light:Catppuccin Latte
+window-theme = dark
 font-size = 14
 
 window-padding-x = 8

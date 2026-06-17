@@ -153,14 +153,15 @@ The tracked tmux config is:
 ```
 
 It keeps the default prefix `C-b`, enables mouse support, uses 1-based
-window/pane numbering, keeps a larger scrollback, and supports OSC 52 clipboard
-copy through SSH/Ghostty:
+window/pane numbering, keeps a larger scrollback, enables extended keys for
+modified key combinations such as Shift+Enter, preserves the current directory
+when splitting panes, and supports OSC 52 clipboard copy through SSH/Ghostty:
 
 ```text
 C-b r  reload ~/.tmux.conf
 C-b |  split horizontally
 C-b -  split vertically
-C-b [  enter copy mode, then y copies selection to clipboard
+C-b [  enter copy mode, then v selects and y copies to clipboard
 ```
 
 After updating a server, reload tmux:

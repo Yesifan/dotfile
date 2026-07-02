@@ -15,6 +15,8 @@ The interactive shell setup uses:
 - `zsh-syntax-highlighting` for realtime command-line highlighting
 - `tmux` for terminal multiplexing
 - `git-delta` for readable `git diff` and `git show`
+- `ripgrep` as `rg` for fast recursive text search
+- `fd` for fast file and directory search
 - Vim with tracked config at `~/.vimrc`
 - Ghostty with a shared XDG config at `~/.config/ghostty/config.ghostty`
 
@@ -30,34 +32,42 @@ tool is installed.
 macOS with Homebrew:
 
 ```zsh
-brew install starship zoxide fzf zsh-autosuggestions zsh-syntax-highlighting tmux git-delta
+brew install starship zoxide fzf zsh-autosuggestions zsh-syntax-highlighting tmux git-delta ripgrep fd
 ```
 
 Debian or Ubuntu:
 
 ```zsh
 sudo apt update
-sudo apt install zsh fzf tmux zsh-autosuggestions zsh-syntax-highlighting git-delta vim
+sudo apt install zsh fzf tmux zsh-autosuggestions zsh-syntax-highlighting git-delta vim ripgrep fd-find
 ```
 
 Install `starship`, `zoxide`, and `git-delta` from your package manager if
-available, or use their official release packages. If you use Linuxbrew, the
-same Homebrew command works:
+available, or use their official release packages. Debian and Ubuntu package
+`fd` as `fd-find`, and the installed command may be named `fdfind`. Create a
+local `fd` shim if needed:
 
 ```zsh
-brew install starship zoxide fzf zsh-autosuggestions zsh-syntax-highlighting tmux git-delta
+mkdir -p "$HOME/.local/bin"
+ln -sf "$(command -v fdfind)" "$HOME/.local/bin/fd"
+```
+
+If you use Linuxbrew, the same Homebrew command works:
+
+```zsh
+brew install starship zoxide fzf zsh-autosuggestions zsh-syntax-highlighting tmux git-delta ripgrep fd
 ```
 
 Fedora:
 
 ```zsh
-sudo dnf install zsh starship zoxide fzf tmux zsh-autosuggestions zsh-syntax-highlighting git-delta vim
+sudo dnf install zsh starship zoxide fzf tmux zsh-autosuggestions zsh-syntax-highlighting git-delta vim ripgrep fd-find
 ```
 
 Arch Linux:
 
 ```zsh
-sudo pacman -S zsh starship zoxide fzf tmux zsh-autosuggestions zsh-syntax-highlighting git-delta vim
+sudo pacman -S zsh starship zoxide fzf tmux zsh-autosuggestions zsh-syntax-highlighting git-delta vim ripgrep fd
 ```
 
 ## Shell Layout

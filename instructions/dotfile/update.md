@@ -34,7 +34,6 @@ Only add explicit files. Do not use `dgit add -u`:
 ```zsh
 dgit add ~/.zshrc
 dgit add ~/.config/zsh/zshrc
-dgit add ~/.config/zsh/zshrc.local.example
 dgit add ~/.config/git/config
 dgit add ~/.config/ghostty/config.ghostty
 dgit add ~/.config/starship.toml
@@ -53,7 +52,7 @@ dgit diff --cached
 dgit diff --cached --name-only
 ```
 
-Do not commit: private keys, tokens, credentials, `.proxyenv`, `.zprofile`, `.zshalias`, `.config/zsh/zshrc.local`, `.gitconfig`.
+Do not commit: private keys, tokens, credentials, `.proxyenv`, `.zprofile`, `.gitconfig`, local additions below the `LOCAL CONFIG BELOW` separator in `.zshrc`.
 
 ## Updating an Existing Machine
 

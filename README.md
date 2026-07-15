@@ -32,9 +32,9 @@ The interactive shell setup uses:
 - Ghostty with a shared XDG config at `~/.config/ghostty/config.ghostty`
 
 The committed `~/.zshrc` is intentionally thin. Stable shared shell behavior
-lives in `~/.config/zsh/zshrc`, while machine-local tool installer blocks can
-remain in `~/.zshrc` without becoming part of the shared configuration. All
-optional tool initialization in the shared zsh config is guarded with
+lives in `~/.config/zsh/zshrc`. Machine-local additions go below the
+`LOCAL CONFIG BELOW` separator in `~/.zshrc` and must not be committed.
+All optional tool initialization in the shared zsh config is guarded with
 `command -v` or file checks, so a fresh machine can load the shell before every
 tool is installed.
 
@@ -99,28 +99,17 @@ Shell files are split by responsibility:
   Login shell setup such as Homebrew/Linuxbrew shellenv. Local-only, not tracked.
 
 ~/.zshrc
-  Thin interactive entrypoint. It sources the tracked shared config and optional
-  local config. Tool installers may append machine-local blocks here.
+  Thin interactive entrypoint. Lines above the `LOCAL CONFIG BELOW` separator
+  are repo-managed; lines below are machine-local and must not be committed.
 
 ~/.config/zsh/zshrc
   Tracked cross-platform interactive shell config: dgit, history search, fzf,
   zoxide, starship, history, completion, autosuggestions, and syntax highlighting.
-
-~/.config/zsh/zshrc.local
-  Optional local-only config for private paths, host aliases, proxies, and
-  machine-specific tool setup. Not tracked.
-
-~/.config/zsh/zshrc.local.example
-  Tracked example for the local-only interactive config.
-
-~/.zshalias
-  Legacy local-only alias file. Still sourced if present, not tracked.
 ```
 
-This keeps the dotfiles stable even when installers such as `nvm`, `uv`,
-`cargo`, `bun`, or language managers append setup snippets to `~/.zshrc`.
-When a setup block is useful everywhere, move a guarded version into
-`~/.config/zsh/zshrc`; otherwise leave it in local config.
+The shared config in `~/.config/zsh/zshrc` is where all portable tool
+initialization lives. Machine-local setup such as proxies or tool paths
+goes into `~/.zshrc` below the `LOCAL CONFIG BELOW` separator.
 
 ## Shell Behavior
 
@@ -250,27 +239,6 @@ elif [[ -x /usr/local/bin/brew ]]; then
 elif [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
-```
-
-### `~/.config/zsh/zshrc.local`
-
-Machine-local interactive shell setup. Start from the example:
-
-```zsh
-cp ~/.config/zsh/zshrc.local.example ~/.config/zsh/zshrc.local
-```
-
-Use it for aliases, `PATH` entries, proxy exports, local app paths, host
-shortcuts, or guarded initialization for tools that are not shared across every
-machine (e.g. `nvm`, `pnpm`, `uv`, `pyenv`, `cargo`).
-
-### `~/.zshalias`
-
-Machine-local aliases, private paths, proxy helpers, host shortcuts, and
-app-specific commands:
-
-```zsh
-[[ -x /Applications/Tailscale.app/Contents/MacOS/Tailscale ]] && alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
 ```
 
 ### `~/.npmrc`

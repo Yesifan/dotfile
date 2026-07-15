@@ -2,6 +2,22 @@
 
 ## 2026-07-15
 
+### Removed
+
+- `.config/zsh/zshrc.local.example` — no longer needed; local config goes in
+  `.zshrc` below the `LOCAL CONFIG BELOW` separator
+- `.zshalias` sourcing — users add local aliases directly in `.zshrc`
+- `.ssh/config` — machine-local proxy/identity config, removed from repo
+
+### Changed
+
+- `.zshrc` — removed `zshrc.local` and `.zshalias` source lines; added
+  `LOCAL CONFIG BELOW` separator for machine-local additions
+- `README.md` — updated Shell Layout and Local-Only Files sections
+- `instructions/dotfile/update.md` — removed deleted files from add/ignore lists
+
+## 2026-07-15
+
 ### README restructuring
 
 - **Tools**: added `jq` to tool list and all platform install commands

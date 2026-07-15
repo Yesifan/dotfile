@@ -1,18 +1,27 @@
 # Dotfiles
 
-These dotfiles are managed with a bare Git repository stored at `$HOME/.cfg`.
-Tracked configuration is intended to work on both macOS and Linux.
+Managed with a bare Git repository at `$HOME/.cfg`. Works on macOS and Linux.
 
-## Quick Links
+## Configuration Overview
 
-- [Tools](#tools)
-- [Install](#install)
-- [Shell Layout](#shell-layout)
-- [Shell Behavior](#shell-behavior)
-- [Tool Configs](#tool-configs)
-- [Local-Only Files](#local-only-files)
-- [Auth Setup](instructions/dotfile/auth.md)
-- [Maintenance](instructions/dotfile/update.md)
+| Software  | Config File                        |
+| --------- | ---------------------------------- |
+| Zsh       | `~/.zshrc`, `~/.config/zsh/zshrc`  |
+| Git       | `~/.config/git/config`             |
+| Vim       | `~/.vimrc`                         |
+| Starship  | `~/.config/starship.toml`          |
+| tmux      | `~/.tmux.conf`                     |
+| Ghostty   | `~/.config/ghostty/config.ghostty` |
+| Codex CLI | `~/.codex/*`                       |
+| OpenCode  | `~/.config/opencode/*`             |
+
+`~/.zshrc` is a thin entrypoint with a `LOCAL CONFIG BELOW` separator; shared
+shell behavior lives in `~/.config/zsh/zshrc`. All optional tool initialization
+is guarded by `command -v` so a fresh machine can load the shell before tools
+are installed.
+
+See [shell.md](instructions/dotfile/shell.md) for shell behavior and
+[config.md](instructions/dotfile/config.md) for tool configuration details.
 
 ## Tools
 
@@ -32,22 +41,40 @@ The interactive shell setup uses:
 - Vim with tracked config at `~/.vimrc`
 - Ghostty with a shared XDG config at `~/.config/ghostty/config.ghostty`
 
-The committed `~/.zshrc` is intentionally thin. Stable shared shell behavior
-lives in `~/.config/zsh/zshrc`. Machine-local additions go below the
-`LOCAL CONFIG BELOW` separator in `~/.zshrc` and must not be committed.
-All optional tool initialization in the shared zsh config is guarded with
-`command -v` or file checks, so a fresh machine can load the shell before every
-tool is installed.
-
 ## Install
 
-### macOS
+### Prerequisites
+
+- git (macOS: `xcode-select --install`, Linux: usually pre-installed)
+- SSH key added to GitHub
+
+### 1. Clone the config
+
+```zsh
+echo ".cfg" >> "$HOME/.gitignore"
+git clone --bare git@github.com:Yesifan/dotfile.git "$HOME/.cfg"
+alias dgit='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+dgit checkout -f
+dgit config --local status.showUntrackedFiles no
+```
+
+### 2. Load the shell
+
+```zsh
+exec zsh -l
+```
+
+Or open a new terminal. Missing tools won't cause errors.
+
+### 3. Install dependencies
+
+#### macOS
 
 ```zsh
 brew install starship zoxide fzf zsh-autosuggestions zsh-syntax-highlighting tmux git-delta ripgrep fd jq
 ```
 
-### Debian / Ubuntu
+#### Debian / Ubuntu
 
 ```zsh
 sudo apt update
@@ -64,209 +91,90 @@ mkdir -p "$HOME/.local/bin"
 ln -sf "$(command -v fdfind)" "$HOME/.local/bin/fd"
 ```
 
-### Fedora
+#### Fedora
 
 ```zsh
 sudo dnf install zsh starship zoxide fzf tmux zsh-autosuggestions zsh-syntax-highlighting git-delta vim ripgrep fd-find jq
 ```
 
-### Arch Linux
+#### Arch Linux
 
 ```zsh
 sudo pacman -S zsh starship zoxide fzf tmux zsh-autosuggestions zsh-syntax-highlighting git-delta vim ripgrep fd jq
 ```
 
-### Linuxbrew
-
-If you use Linuxbrew on Linux, the same Homebrew command works:
+#### Linuxbrew
 
 ```zsh
 brew install starship zoxide fzf zsh-autosuggestions zsh-syntax-highlighting tmux git-delta ripgrep fd jq
 ```
 
-### Notes
+### 4. Set up environment variables
 
-- `starship`, `zoxide`, and `git-delta` may need manual installation via their
-  official releases if not in your distro's repos.
-- Debian / Ubuntu packages `fd` as `fd-find` — see workaround above.
-- `jq` is pre-installed on macOS; install via Homebrew for the latest version.
+Add to `~/.zshrc` below the `LOCAL CONFIG BELOW` separator:
 
-## Shell Layout
+```zsh
+export GITHUB_PERSONAL_ACCESS_TOKEN="github_pat_..."
+export CONTEXT7_API_KEY="ctx7_..."
+```
 
-Shell files are split by responsibility:
+| Variable                       | Purpose                                                               |
+| ------------------------------ | --------------------------------------------------------------------- |
+| `GITHUB_PERSONAL_ACCESS_TOKEN` | GitHub PAT for Codex + OpenCode MCP                                   |
+| `CONTEXT7_API_KEY`             | Context7 API Key for Codex + OpenCode MCP                             |
+| `OPENCODE_ENABLE_EXA=1`        | OpenCode Web Search (only needed when not using an OpenCode Provider) |
+
+See [auth.md](instructions/dotfile/auth.md) for details.
+
+### 5. Verify
+
+```zsh
+exec zsh -l
+opencode mcp list       # should show github  connected
+codex mcp list          # should show github  connected
+```
+
+## File Management Principles
+
+### Tracked files (managed by dgit)
+
+Only explicitly added files — never use `dgit add -u`:
 
 ```
-~/.zprofile
-  Login shell setup such as Homebrew/Linuxbrew shellenv. Local-only, not tracked.
-
-~/.zshrc
-  Thin interactive entrypoint. Lines above the `LOCAL CONFIG BELOW` separator
-  are repo-managed; lines below are machine-local and must not be committed.
-
+~/.zshrc                          # only content above LOCAL CONFIG BELOW
 ~/.config/zsh/zshrc
-  Tracked cross-platform interactive shell config: dgit, history search, fzf,
-  zoxide, starship, history, completion, autosuggestions, and syntax highlighting.
-```
-
-The shared config in `~/.config/zsh/zshrc` is where all portable tool
-initialization lives. Machine-local setup such as proxies or tool paths
-goes into `~/.zshrc` below the `LOCAL CONFIG BELOW` separator.
-
-## Shell Behavior
-
-The shared zsh config keeps startup portable by checking whether optional tools
-or plugin files exist before loading them.
-
-- **History**: persisted in `~/.zsh_history` with a larger limit, incremental
-  append, shared history across terminals, duplicate reduction, and leading
-  space exclusion.
-- **Completion**: initialized with `compinit`, menu selection, case-insensitive
-  matching, and grouped completion output.
-- **Prefix search**: type a prefix such as `ls`, then press Up or Down to search
-  only matching history entries.
-- **Autosuggestions**: `zsh-autosuggestions` shows gray inline suggestions from
-  history.
-- **Syntax highlighting**: `zsh-syntax-highlighting` highlights commands as you
-  type.
-- **Directory jumping**: `zoxide` provides `z` and `zi`.
-- **Fuzzy search**: `fzf` integrations in real terminal sessions. New fzf uses
-  `fzf --zsh`; older Ubuntu packages fall back to bundled example scripts.
-
-## Tool Configs
-
-### Git
-
-Shared Git behavior lives in:
-
-```
 ~/.config/git/config
-```
-
-Personal identity stays local in `~/.gitconfig` and is not committed. The shared
-config uses `git-delta` as the pager for readable `git diff` and `git show`
-output. Install `git-delta` before using this config on a new machine.
-
-### Vim
-
-Tracked Vim config lives in:
-
-```
-~/.vimrc
-```
-
-Intentionally lightweight: no plugin manager, cross-platform clipboard defaults,
-line numbers, persistent undo, sane search behavior, and basic filetype
-indentation.
-
-### Starship
-
-Starship uses the tracked config at:
-
-```
-~/.config/starship.toml
-```
-
-Keeps Starship close to its defaults and does not add a local/remote host
-indicator.
-
-### tmux
-
-The tracked tmux config is:
-
-```
-~/.tmux.conf
-```
-
-It keeps the default prefix `C-b`, enables mouse support, uses 1-based
-window/pane numbering, keeps a larger scrollback, enables extended keys for
-modified key combinations such as Shift+Enter, preserves the current directory
-when splitting panes, and supports OSC 52 clipboard copy through SSH/Ghostty:
-
-```
-C-b r  reload ~/.tmux.conf
-C-b |  split horizontally
-C-b -  split vertically
-C-b [  enter copy mode, then v selects and y copies to clipboard
-```
-
-After updating a server, reload tmux:
-
-```zsh
-tmux source-file ~/.tmux.conf
-```
-
-If clipboard copy works over SSH outside tmux but fails inside tmux, verify OSC
-52 forwarding inside tmux:
-
-```zsh
-printf '\e]52;c;%s\a' "$(printf 'tmux-copy-test' | base64 | tr -d '\n')"
-```
-
-Then paste locally and confirm the clipboard contains `tmux-copy-test`.
-
-### Ghostty
-
-Linux reads the tracked config directly from:
-
-```
 ~/.config/ghostty/config.ghostty
+~/.config/starship.toml
+~/.vimrc
+~/.tmux.conf
+~/.codex/*
+~/.agents/.skill-lock.json
+~/.config/opencode/*
+instructions/dotfile/*
 ```
 
-On macOS, keep the tracked file in the same XDG location and symlink Ghostty's
-Application Support config to it:
+### Untracked files (local only)
 
-```zsh
-mkdir -p "$HOME/.config/ghostty"
-mkdir -p "$HOME/Library/Application Support/com.mitchellh.ghostty"
-ln -s "$HOME/.config/ghostty/config.ghostty" "$HOME/Library/Application Support/com.mitchellh.ghostty/config.ghostty"
+```
+~/.zprofile                        # brew shellenv, login init
+~/.ssh/config                      # machine-specific SSH hosts/proxy
+~/.npmrc                           # npm registry, auth tokens
+~/.gitconfig                       # personal git identity
+~/.zshrc content below LOCAL CONFIG BELOW  # local PATH, aliases, env vars
+*.pem, *.key, .proxyenv            # secrets — never enter the repo
 ```
 
-The macOS symlink itself is local-only and is not committed.
+### Conflict Resolution
 
-## Local-Only Files
+| File                                                                | Owner          | Strategy                                                 |
+| ------------------------------------------------------------------- | -------------- | -------------------------------------------------------- |
+| Repo-managed parts of tracked files (e.g. `.zshrc` above separator) | remote         | remote takes precedence (theirs)                         |
+| `.zshrc` content below the separator                                | local          | preserve local (ours)                                    |
+| `.zprofile`, `.ssh/config`, `.npmrc`, `.gitconfig`                  | local          | never in repo                                            |
+| `.codex/config.toml`, `.config/opencode/opencode.jsonc`             | remote + local | matching keys use repo version; local-only keys are kept |
 
-These files are intentionally **not tracked**. Use them for machine-specific
-configuration that should never enter the dotfiles repo.
+### Daily Operations
 
-### `~/.zprofile`
-
-Login-shell or machine-specific setup such as Homebrew:
-
-```zsh
-if [[ -x /opt/homebrew/bin/brew ]]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-elif [[ -x /usr/local/bin/brew ]]; then
-  eval "$(/usr/local/bin/brew shellenv)"
-elif [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-fi
-```
-
-### `~/.ssh/config`
-
-Machine-local SSH host aliases, proxy settings, and identity files.
-Kept on disk; no longer tracked in the dotfiles repo.
-
-### `~/.npmrc`
-
-npm-specific configuration such as registry URLs, cache location, `save-exact`,
-strict SSL behavior, and package-manager authentication tokens. Do not put
-general shell exports or aliases here.
-
-### Keeping secrets out
-
-Credentials should never enter tracked files. If a token must exist locally,
-prefer the tool's own private config file (e.g. `~/.npmrc`). Always review
-staged changes before committing:
-
-```zsh
-dgit diff --cached --name-only
-```
-
-## Maintenance
-
-See [instructions/dotfile/update.md](instructions/dotfile/update.md) for the
-dgit workflow, making changes, and updating existing machines.
-
-For breaking changes that need manual migration steps on existing machines,
-see [instructions/dotfile/migrate.md](instructions/dotfile/migrate.md).
+See [migrate.md](instructions/dotfile/migrate.md) for committing changes,
+pushing, updating existing machines, and migration plans.

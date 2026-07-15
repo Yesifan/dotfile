@@ -1,34 +1,114 @@
-# Migration Guide
+# Maintenance & Migration Guide
+
+## dgit alias
+
+```zsh
+alias dgit='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+```
+
+All bare-repo operations go through this alias.
+
+## Making Changes
+
+Only add explicit files. Do not use `dgit add -u`:
+
+```zsh
+dgit add ~/.zshrc
+dgit add ~/.config/zsh/zshrc
+dgit add ~/.config/git/config
+dgit add ~/.config/ghostty/config.ghostty
+dgit add ~/.config/starship.toml
+dgit add ~/.vimrc
+dgit add ~/.tmux.conf
+dgit add ~/.codex/AGENTS.md
+dgit add ~/.codex/config.toml
+dgit add ~/.codex/rules/default.rules
+dgit add ~/.agents/.skill-lock.json
+dgit add ~/.config/opencode/opencode.jsonc
+dgit add ~/.config/opencode/AGENTS.md
+dgit add ~/.config/opencode/tui.json
+dgit add ~/README.md
+dgit commit -m "Describe the change"
+dgit push origin main
+```
+
+### Review before committing
+
+```zsh
+dgit status --short --untracked-files=all
+dgit diff --cached
+dgit diff --cached --name-only
+```
+
+Never commit: private keys, tokens, credentials, `.proxyenv`, `.zprofile`,
+`.gitconfig`, local additions below the `LOCAL CONFIG BELOW` separator in
+`.zshrc`.
+
+## Updating an Existing Machine
+
+```zsh
+dgit pull --rebase origin main
+```
+
+If there are local changes, stash first:
+
+```zsh
+dgit stash push -m "local changes"
+dgit pull origin main
+dgit stash pop
+```
+
+After pulling, install any missing tools for that platform. On Ubuntu the apt
+`fzf` package may be older and not support `fzf --zsh`; `.zshrc` falls back to
+the package's example scripts.
+
+If the machine still has old oh-my-zsh files, remove them:
+
+```zsh
+rm -rf ~/.oh-my-zsh ~/.cache/oh-my-zsh ~/.zcompdump*
+```
+
+The tracked `~/.vimrc` is the Vim entrypoint; no symlink required.
+
+After pulling, check whether the update includes a breaking change. If
+`dgit log -1 --format=%s` matches a hash in the **Breaking updates** section of
+this file, follow that section's migration plan before reloading the shell.
+
+---
+
+## Migration Guide
 
 For agents updating local machines via dgit. Covers both regular updates
 and per-commit migration plans for breaking changes.
 
-## Conventions
+### Conventions
 
 -   Local always aligns to remote. Never create branches; never let local
     diverge from origin.
 -   Always `dgit pull --rebase origin main` (no merge commits).
 -   Conflict default rule: anything ABOVE the `LOCAL CONFIG BELOW`
     separator in `~/.zshrc` (and all other repo-tracked files) is
-    repo-managed -- prefer remote ("theirs"). Anything BELOW the
-    separator in `~/.zshrc` is machine-local -- preserve local ("ours").
+    repo-managed — prefer remote ("theirs"). Anything BELOW the
+    separator in `~/.zshrc` is machine-local — preserve local ("ours").
+-   For `.codex/config.toml` and `.config/opencode/opencode.jsonc`: same
+    config keys use the repo version; local-only keys are preserved.
 -   After each step, reload shell: `exec zsh -l`.
 
-## Migrating to fa12020 baseline
+### Migrating to fa12020 baseline
 
 Only needed on machines where `dgit log --oneline -1` shows a commit
 earlier than `fa12020` (i.e. `fa12020` itself is NOT yet in the log).
 Apply this one-shot migration first, then run the per-commit plans below
 to reach the latest.
 
-### Policy
+#### Policy
 
 Repo version is authoritative for ALL tracked files. The reset discards
 any local modifications to files tracked by dgit. Only machine-LOCAL
 content (brew shellenv, PATH additions, tool inits, aliases) should be
 re-applied from backup afterwards.
 
-### What changed between pre-fa12020 and fa12020
+#### What changed between pre-fa12020 and fa12020
 
 **Files removed from repo:** `.zshenv`, `.npmrc`, `.proxyenv.example`
 (They stay on disk as untracked local files; no longer managed by dgit)
@@ -49,11 +129,10 @@ re-applied from backup afterwards.
 .config/opencode/opencode.jsonc
 .config/opencode/AGENTS.md
 .config/opencode/tui.json
-instructions/dotfile/update.md
 instructions/dotfile/CHANGELOG.md
 ```
 
-### Pre-flight -- backup all machine-local content
+#### Pre-flight — backup all machine-local content
 
 ```sh
 mkdir -p /tmp/dotfile-migrate
@@ -66,7 +145,7 @@ for f in .zshrc .zshenv .zshalias .npmrc .ssh/config \
 done
 ```
 
-### Pre-flight -- move aside untracked files that block checkout
+#### Pre-flight — move aside untracked files that block checkout
 
 The reset creates tracked files at these paths. If they already exist as
 untracked files on disk, git refuses. Move them temporarily:
@@ -83,7 +162,7 @@ for f in \
 done
 ```
 
-### Migration
+#### Migration
 
 1.  Fetch and reset to baseline:
 
@@ -102,7 +181,7 @@ done
     ```
 
     For `.agents/.skill-lock.json` and `.config/opencode/opencode.jsonc`,
-    **keep the repo version** -- the backup is older or incompatible.
+    **keep the repo version** — the backup is older or incompatible.
 
 2.  Re-apply machine-local shell content.
 
@@ -134,12 +213,12 @@ done
     command -v zoxide >/dev/null && echo "zoxide ok"
     ```
 
-### After this
+#### After this
 
 The machine is now on `fa12020`. Proceed to **Breaking updates** below
 (starting with `cc9c297`) to reach the latest.
 
-## Regular (non-breaking) updates
+### Regular (non-breaking) updates
 
 Apply when the only changes are doc additions, config tweaks, or new
 tool blocks guarded by `command -v`:
@@ -169,14 +248,14 @@ dgit reset --hard origin/main
 # LOCAL CONFIG BELOW separator from your backup.
 ```
 
-## Breaking updates (per-commit migration list, newest first)
+### Breaking updates (per-commit migration list, newest first)
 
 Each commit below breaks existing behaviour. If `dgit log --oneline`
 does not yet contain the hash, apply the migration plan.
 
 ---
 
-### `cc9c297` -- refactor(zsh): fold local config into .zshrc separator
+#### `cc9c297` — refactor(zsh): fold local config into .zshrc separator
 
 **Date:** 2026-07-15
 
@@ -184,8 +263,8 @@ does not yet contain the hash, apply the migration plan.
 
 -   `~/.zshrc` no longer sources `~/.config/zsh/zshrc.local`
 -   `~/.zshrc` no longer sources `~/.zshalias`
--   `.config/zsh/zshrc.local.example` -- removed from repo
--   `.ssh/config` -- removed from tracking
+-   `.config/zsh/zshrc.local.example` — removed from repo
+-   `.ssh/config` — removed from tracking
 
 **Affected files:**
 
@@ -200,7 +279,7 @@ does not yet contain the hash, apply the migration plan.
 -   `grep -q zshalias ~/.zshrc` returns 0
 -   `dgit ls-files --error-unmatch .ssh/config 2>/dev/null` succeeds
 
-**Pre-flight -- backup machine-local data:**
+**Pre-flight — backup machine-local data:**
 
 ```sh
 mkdir -p /tmp/dotfile-migrate
@@ -226,7 +305,7 @@ cp ~/.zshrc /tmp/dotfile-migrate/zshrc
 2.  Resolve `~/.zshrc` conflict:
 
     -   Open `~/.zshrc`.
-    -   Keep the **remote** version as the top section -- verify it
+    -   Keep the **remote** version as the top section — verify it
         contains the new header, the `source ...zshrc` line, and the
         `LOCAL CONFIG BELOW` separator. It should NOT have `zshrc.local`
         or `.zshalias` source lines.
@@ -240,10 +319,10 @@ cp ~/.zshrc /tmp/dotfile-migrate/zshrc
         2. PATH additions
         3. Tool inits (`nvm`, `pnpm`, etc.)
         4. Aliases
-    -   Also check `/tmp/dotfile-migrate/zshrc.local` -- its nvm and
+    -   Also check `/tmp/dotfile-migrate/zshrc.local` — its nvm and
         pnpm blocks should be migrated to `~/.zshrc` below the
         separator, guarded by the same conditions.
-    -   Also check `/tmp/dotfile-migrate/zshalias` -- its Tailscale
+    -   Also check `/tmp/dotfile-migrate/zshalias` — its Tailscale
         alias (or any alias) should be appended below the separator,
         guarded by `[[ -x ... ]]`.
     -   Save, then mark resolved and continue:
@@ -276,19 +355,19 @@ cp ~/.zshrc /tmp/dotfile-migrate/zshrc
     exec zsh -l
     ```
 
-    -   `dgit status --short` -- clean (no tracked file modified)
-    -   `dgit ls-files | grep -E 'ssh/config|zshrc\.local|zshalias'` --
+    -   `dgit status --short` — clean (no tracked file modified)
+    -   `dgit ls-files | grep -E 'ssh/config|zshrc\.local|zshalias'` —
         empty
-    -   `which pnpm` && `which nvm` -- still resolve
-    -   `ssh -T git@github.com` -- still authenticates (proxy/identity
+    -   `which pnpm` && `which nvm` — still resolve
+    -   `ssh -T git@github.com` — still authenticates (proxy/identity
         preserved)
 
 ---
 
-### Future entries -- append below (template)
+### Future entries — append below (template)
 
 ```
-### `<full-hash>` -- `<subject>`
+### `<full-hash>` — `<subject>`
 
 **Date:** YYYY-MM-DD
 

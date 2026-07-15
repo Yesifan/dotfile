@@ -1,3 +1,5 @@
-# Tool Preferences
+# Global development preferences
 
-rg > grep（快10x，自动忽略gitignore），fd > find（直观默认递归），jq > grep/sed（JSON查询）
+- Use pnpm for Node.js projects unless the repository specifies otherwise.
+- Prefer `rg` for text search and `fd` for file search.
+- Prefer existing project scripts and tooling over introducing new tooling.

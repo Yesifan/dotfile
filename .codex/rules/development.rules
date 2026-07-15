@@ -1,0 +1,252 @@
+# ---- Always forbidden: privilege escalation / broad host access ----
+
+prefix_rule(
+    pattern = ["sudo"],
+    decision = "forbidden",
+    justification = "Do not escalate privileges from Codex. Ask the user to run privileged commands manually.",
+)
+
+prefix_rule(
+    pattern = ["su"],
+    decision = "forbidden",
+    justification = "Do not switch users from Codex.",
+)
+
+# ---- Dangerous destructive commands ----
+
+prefix_rule(
+    pattern = ["rm", "-rf", "/"],
+    decision = "forbidden",
+    justification = "Never allow recursive deletion from filesystem root.",
+)
+
+prefix_rule(
+    pattern = ["chmod", "-R", "777"],
+    decision = "forbidden",
+    justification = "Do not broadly weaken permissions.",
+)
+
+prefix_rule(
+    pattern = ["pwd"],
+    decision = "allow",
+    justification = "Printing the current directory is safe.",
+)
+
+prefix_rule(
+    pattern = [
+        "rg",
+        [
+            "--files",
+            "-n",
+            "--line-number",
+            "-l",
+            "--files-with-matches",
+        ],
+    ],
+    decision = "allow",
+    justification = "Common ripgrep file listing and search commands are read-only and safe.",
+)
+
+prefix_rule(
+    pattern = [
+        [
+            "fd",
+            "fdfind",
+        ],
+        [
+            "--type",
+            "-t",
+            "--extension",
+            "-e",
+        ],
+    ],
+    decision = "allow",
+    justification = "Common fd/fdfind file discovery commands are read-only and safe.",
+)
+
+# ---- Common Docker inspection ----
+
+prefix_rule(
+    pattern = [
+        "docker",
+        [
+            "ps",
+            "images",
+            "version",
+            "info",
+            "inspect",
+            "logs",
+        ],
+    ],
+    decision = "allow",
+    justification = "Common Docker inspection commands are read-only and safe.",
+)
+
+prefix_rule(
+    pattern = ["docker", "volume", "ls"],
+    decision = "allow",
+    justification = "Listing Docker volumes is read-only and safe.",
+)
+
+prefix_rule(
+    pattern = ["docker", "network", "ls"],
+    decision = "allow",
+    justification = "Listing Docker networks is read-only and safe.",
+)
+
+prefix_rule(
+    pattern = [
+        "docker",
+        "compose",
+        [
+            "ps",
+            "logs",
+            "config",
+            "version",
+        ],
+    ],
+    decision = "allow",
+    justification = "Common Docker Compose inspection commands are read-only and safe.",
+)
+
+# ---- Common runtime inspection ----
+
+prefix_rule(
+    pattern = [
+        [
+            "node",
+            "python",
+            "python3",
+        ],
+        [
+            "--version",
+            "-v",
+            "-V",
+        ],
+    ],
+    decision = "allow",
+    justification = "Reading runtime versions is safe.",
+)
+
+prefix_rule(
+    pattern = ["node", "--check"],
+    decision = "allow",
+    justification = "Checking JavaScript syntax with node --check is read-only and safe.",
+)
+
+prefix_rule(
+    pattern = [
+        "nvm",
+        [
+            "--version",
+            "version",
+            "current",
+            "which",
+            "ls",
+        ],
+    ],
+    decision = "allow",
+    justification = "Common nvm inspection commands are safe.",
+)
+
+# ---- Common read-only Git inspection ----
+
+prefix_rule(
+    pattern = [
+        "git",
+        [
+            "add",
+            "status",
+            "diff",
+            "log",
+            "rev-parse",
+            "ls-files",
+            "merge-base",
+            "show",
+            "blame",
+            "grep",
+        ],
+    ],
+    decision = "allow",
+    justification = "Common Git inspection commands are read-only and safe.",
+)
+
+prefix_rule(
+    pattern = ["git", "branch", "--show-current"],
+    decision = "allow",
+    justification = "Reading the current Git branch name is safe.",
+)
+
+prefix_rule(
+    pattern = ["git", "remote", "-v"],
+    decision = "allow",
+    justification = "Reading configured Git remotes is safe.",
+)
+
+prefix_rule(
+    pattern = [
+        "git",
+        [
+            "commit",
+            "push",
+            "reset",
+            "clean",
+            "rebase",
+            "checkout",
+            "switch",
+            "restore",
+            "merge",
+            "pull",
+        ],
+    ],
+    decision = "prompt",
+    justification = "Git command may modify files, history, or remote state.",
+)
+
+# ---- Common package-manager verification ----
+
+prefix_rule(
+    pattern = [
+        "pnpm",
+        "run",
+        [
+            "check",
+            "lint",
+            "test",
+            "test:unit",
+            "test:e2e",
+            "typecheck",
+            "format:check",
+        ],
+    ],
+    decision = "allow",
+    justification = "Common pnpm verification scripts are expected local checks.",
+)
+
+prefix_rule(
+    pattern = [
+        "pnpm",
+        [
+            "check",
+            "lint",
+            "test",
+            "test:unit",
+            "test:e2e",
+            "typecheck",
+        ],
+    ],
+    decision = "allow",
+    justification = "Common direct pnpm verification commands are expected local checks.",
+)
+
+
+
+# ---- agents entrypoint ----
+
+prefix_rule(pattern = ["opencode"])
+
+prefix_rule(
+    pattern = ["opencode", "run", "--dangerously-skip-permissions"],
+    decision = "prompt",
+    justification = "请使用受限权限配置或隔离 worktree，不要跳过权限检查",
+)

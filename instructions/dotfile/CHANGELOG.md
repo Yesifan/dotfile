@@ -34,6 +34,22 @@
 
 ## 2026-07-15
 
+### Added
+
+- `instructions/dotfile/shell.md` — Shell Layout and Behavior extracted from README
+- `instructions/dotfile/config.md` — Tool Configurations (Git, Vim, Starship, tmux, Ghostty) extracted from README
+
+### Changed
+
+- `README.md` — restructured: intro with config table, tools, install (clone-first order + env vars), file management principles (tracked/untracked/conflict rules)
+- `instructions/dotfile/migrate.md` — absorbed update.md content (dgit workflow, making changes, updating machines); added conflict rules for `.codex/config.toml` and `.config/opencode/opencode.jsonc`
+
+### Removed
+
+- `instructions/dotfile/update.md` — merged into migrate.md
+
+## 2026-07-15
+
 ### README restructuring
 
 - **Tools**: added `jq` to tool list and all platform install commands

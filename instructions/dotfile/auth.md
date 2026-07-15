@@ -2,14 +2,15 @@
 
 ## GitHub PAT（Codex + OpenCode）
 
-从 GitHub 获取：
+从 [GitHub](https://www.github.com) 获取：
 
-1. GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token
+1. [Personal access tokens](https://github.com/settings/personal-access-tokens) → Fine-grained tokens → Generate new token
 2. Token name: `OpenCode GitHub MCP`
 3. Expiration: `30 days` 或 `90 days`
-4. Repository access: `Only select repositories`
-5. Permissions: `Contents` Read-only, `Issues` Read-only, `Pull requests` Read-only
-6. Generate and copy the token
+4. Resource owner: 选你的 personal account
+5. Repository access: `All repositories`（或 `Only select repositories` 并勾选所需仓库）
+6. Permissions: 无需额外设置，所有仓库操作由 Repository access 控制
+7. Generate and copy the token
 
 设置环境变量：
 

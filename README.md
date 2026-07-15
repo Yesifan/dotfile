@@ -175,6 +175,7 @@ instructions/dotfile/*
 | `.zshrc` content below the separator                                | local          | preserve local (ours)                                    |
 | `.zprofile`, `.ssh/config`, `.npmrc`, `.gitconfig`                  | local          | never in repo                                            |
 | `.codex/config.toml`, `.config/opencode/opencode.jsonc`             | remote + local | matching keys use repo version; local-only keys are kept |
+| `.agents/.skill-lock.json`                                          | remote + local | merge — local installs preserved alongside repo entries |
 
 ### Daily Operations
 

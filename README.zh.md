@@ -176,6 +176,7 @@ instructions/dotfile/*
 | `.zshrc` 分隔线以下内容                                 | 本地      | 保留本地（ours）                           |
 | `.zprofile`, `.ssh/config`, `.npmrc`, `.gitconfig`      | 本地      | 不进 repo                                  |
 | `.codex/config.toml`, `.config/opencode/opencode.jsonc` | 远程+本地 | 相同配置用 repo 版本覆盖，本地特有配置保留 |
+| `.agents/.skill-lock.json`                               | 远程+本地 | 合并 — 本地安装的 skill 与 repo 记录共存     |
 
 ### 日常维护
 

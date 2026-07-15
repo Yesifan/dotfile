@@ -118,7 +118,7 @@ export CONTEXT7_API_KEY="ctx7_..."
 | `CONTEXT7_API_KEY`             | Context7 API Key，用于 Codex + OpenCode MCP          |
 | `OPENCODE_ENABLE_EXA=1`        | OpenCode Web Search（仅非 OpenCode Provider 时需要） |
 
-详情见 [auth.md](instructions/dotfile/auth.md)。
+详情见 [agent.md](instructions/dotfile/agent.md)。
 
 ### 5. 验证
 
@@ -127,6 +127,15 @@ exec zsh -l
 opencode mcp list       # 应看到 github  connected
 codex mcp list          # 应看到 github  connected
 ```
+
+### 6. 安装 Agent Skills（可选）
+
+```zsh
+pnpm dlx skills add <package> -g
+pnpm dlx skills update -g
+```
+
+详见 [agent.md](instructions/dotfile/agent.md) 的 Skills 章节。
 
 ## 文件更新原则
 

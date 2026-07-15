@@ -111,20 +111,13 @@ brew install starship zoxide fzf zsh-autosuggestions zsh-syntax-highlighting tmu
 
 ### 4. Set up environment variables
 
-Add to `~/.zshrc` below the `LOCAL CONFIG BELOW` separator:
+| Variable                       | Purpose                                             |
+| ------------------------------ | --------------------------------------------------- |
+| `GITHUB_PERSONAL_ACCESS_TOKEN` | GitHub PAT for Codex + OpenCode MCP                 |
+| `CONTEXT7_API_KEY`             | Context7 API Key for Codex + OpenCode MCP           |
+| `OPENCODE_ENABLE_EXA=1`        | OpenCode Web Search (non-OpenCode Provider 时需要)  |
 
-```zsh
-export GITHUB_PERSONAL_ACCESS_TOKEN="github_pat_..."
-export CONTEXT7_API_KEY="ctx7_..."
-```
-
-| Variable                       | Purpose                                                               |
-| ------------------------------ | --------------------------------------------------------------------- |
-| `GITHUB_PERSONAL_ACCESS_TOKEN` | GitHub PAT for Codex + OpenCode MCP                                   |
-| `CONTEXT7_API_KEY`             | Context7 API Key for Codex + OpenCode MCP                             |
-| `OPENCODE_ENABLE_EXA=1`        | OpenCode Web Search (only needed when not using an OpenCode Provider) |
-
-See [auth.md](instructions/dotfile/auth.md) for details.
+Add to `~/.zshrc` below the `LOCAL CONFIG BELOW` separator. See [agent.md](instructions/dotfile/agent.md) for setup details.
 
 ### 5. Verify
 
@@ -133,6 +126,15 @@ exec zsh -l
 opencode mcp list       # should show github  connected
 codex mcp list          # should show github  connected
 ```
+
+### 6. Install Agent Skills (optional)
+
+```zsh
+pnpm dlx skills add <package> -g
+pnpm dlx skills update -g
+```
+
+See [agent.md](instructions/dotfile/agent.md) for the full skill list.
 
 ## File Management Principles
 

@@ -14,7 +14,12 @@
 - `.zshrc` — removed `zshrc.local` and `.zshalias` source lines; added
   `LOCAL CONFIG BELOW` separator for machine-local additions
 - `README.md` — updated Shell Layout and Local-Only Files sections
-- `instructions/dotfile/update.md` — removed deleted files from add/ignore lists
+- `instructions/dotfile/update.md` — removed deleted files from add/ignore lists;
+  added breaking-change check reference to migrate.md
+- `instructions/dotfile/migrate.md` — new agent-facing migration guide covering
+  breaking changes with per-commit plans
+- `README.md` — added `.ssh/config` to Local-Only Files; linked migrate.md
+  from Maintenance section
 
 ## 2026-07-15
 

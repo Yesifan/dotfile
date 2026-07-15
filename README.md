@@ -241,6 +241,11 @@ elif [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
 fi
 ```
 
+### `~/.ssh/config`
+
+Machine-local SSH host aliases, proxy settings, and identity files.
+Kept on disk; no longer tracked in the dotfiles repo.
+
 ### `~/.npmrc`
 
 npm-specific configuration such as registry URLs, cache location, `save-exact`,
@@ -261,3 +266,6 @@ dgit diff --cached --name-only
 
 See [instructions/dotfile/update.md](instructions/dotfile/update.md) for the
 dgit workflow, making changes, and updating existing machines.
+
+For breaking changes that need manual migration steps on existing machines,
+see [instructions/dotfile/migrate.md](instructions/dotfile/migrate.md).

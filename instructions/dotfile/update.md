@@ -86,3 +86,8 @@ rm -rf ~/.oh-my-zsh ~/.cache/oh-my-zsh ~/.zcompdump*
 ```
 
 The tracked `~/.vimrc` is the Vim entrypoint; no symlink required.
+
+After pulling, check whether the update includes a breaking change. If
+`dgit log -1 --format=%s` matches a hash in
+[instructions/dotfile/migrate.md](migrate.md), follow that section's
+migration plan before reloading the shell.

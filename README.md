@@ -11,6 +11,7 @@ Tracked configuration is intended to work on both macOS and Linux.
 - [Shell Behavior](#shell-behavior)
 - [Tool Configs](#tool-configs)
 - [Local-Only Files](#local-only-files)
+- [Auth Setup](instructions/dotfile/auth.md)
 - [Maintenance](instructions/dotfile/update.md)
 
 ## Tools

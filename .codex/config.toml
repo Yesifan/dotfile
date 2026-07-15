@@ -1,162 +1,78 @@
-model = "gpt-5.5"
+model = "gpt-5.6-terra"
 model_reasoning_effort = "medium"
 personality = "pragmatic"
+
 approval_policy = "on-request"
 default_permissions = "development"
-service_tier = "default"
+
+[agents]
+max_threads = 6
+max_depth = 1
 
 [features]
-js_repl = false
-multi_agent = true
+network_proxy = true
 
 [permissions.development]
-description = "Normal local development with workspace write access, pnpm global access, and network."
+description = "Normal local development with workspace write access, pnpm global access, and limited network."
 extends = ":workspace"
 
-[permissions.development.workspace_roots]
-"/Users/ye/Library/pnpm" = true
-"/Users/ye/Library/Caches/pnpm" = true
-"/Users/ye/.npm" = true
-
 [permissions.development.filesystem]
-":minimal" = "read"
-":tmpdir" = "write"
-":slash_tmp" = "write"
-glob_scan_max_depth = 4
-"/Users/ye/.cache/codex-runtimes/codex-primary-runtime/dependencies" = "read"
-"/Users/ye/.nvm/versions/node" = "read"
-"/Users/ye/README.md" = "write"
+glob_scan_max_depth = 8
+
+"~/.npm" = "write"
+"~/.nvm/versions/node" = "read"
+"~/Library/pnpm" = "write"
+"~/Library/Caches/pnpm" = "write"
+
+"~/.local/share/opencode" = "write"
+"~/.local/share/pnpm/store" = "write"
+"~/.cache/ms-playwright" = "write"
+"~/.cache/puppeteer" = "write"
+"~/.cache/Cypress" = "write"
+"~/.cache/uv" = "write"
 
 [permissions.development.filesystem.":workspace_roots"]
 "." = "write"
-"**/.env" = "deny"
-"**/.env.local" = "deny"
-"**/.env.*.local" = "deny"
-"**/.env.development" = "deny"
-"**/.env.production" = "deny"
-"**/.env.test" = "deny"
-"**/.env.staging" = "deny"
+"*.pem" = "deny"
 "**/*.pem" = "deny"
+
+"*.key" = "deny"
 "**/*.key" = "deny"
 
 [permissions.development.network]
 enabled = true
+mode = "full"
+allow_local_binding = true
 
-[marketplaces.openai-bundled]
-last_updated = "2026-07-15T03:41:38Z"
-source_type = "local"
-source = "/Users/ye/.codex/.tmp/bundled-marketplaces/openai-bundled"
+[permissions.development.network.domains]
+"localhost" = "allow"
+"127.0.0.1" = "allow"
+"::1" = "allow"
 
-[marketplaces.openai-primary-runtime]
-last_updated = "2026-07-10T07:41:33Z"
-source_type = "local"
-source = "/Users/ye/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
+"registry.npmjs.org" = "allow"
 
-[plugins."chrome@openai-bundled"]
+"github.com" = "allow"
+"api.github.com" = "allow"
+"codeload.github.com" = "allow"
+"**.githubusercontent.com" = "allow"
+
+"nodejs.org" = "allow"
+"**.nodejs.org" = "allow"
+
+[mcp_servers.context7]
+url = "https://mcp.context7.com/mcp"
 enabled = true
 
-[plugins."documents@openai-primary-runtime"]
-enabled = true
+[mcp_servers.context7.http_headers]
+CONTEXT7_API_KEY = "{env:CONTEXT7_API_KEY}"
 
-[plugins."notion@openai-curated"]
-enabled = true
+[mcp_servers.github]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-github"]
 
-[plugins."pdf@openai-primary-runtime"]
-enabled = true
+[mcp_servers.github.env]
+GITHUB_PERSONAL_ACCESS_TOKEN = "{env:GITHUB_PERSONAL_ACCESS_TOKEN}"
 
-[plugins."presentations@openai-primary-runtime"]
-enabled = true
-
-[plugins."spreadsheets@openai-primary-runtime"]
-enabled = true
-
-[plugins."template-creator@openai-primary-runtime"]
-enabled = true
-
-[plugins."sites@openai-bundled"]
-enabled = true
-
-[plugins."visualize@openai-bundled"]
-enabled = true
-
-[plugins."browser@openai-bundled"]
-enabled = true
-
-[mcp_servers.node_repl]
-args = []
-command = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
-startup_timeout_sec = 120
-
-[mcp_servers.node_repl.env]
-NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
-NODE_REPL_NODE_MODULE_DIRS = "/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
-NODE_REPL_NODE_PATH = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
-NODE_REPL_TRUSTED_CODE_PATHS = "/Users/ye/.codex"
-CODEX_HOME = "/Users/ye/.codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "cf732b4a285497bfd7e75a2ac14879bce9ae644eb4e1babeb17bb6a840dfc9bd"
-BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
-NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
-NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
-NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = "Control desktop apps on macOS through Computer Use."
-BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.707.72221"
-CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
-
-[mcp_servers.computer-use]
-command = "./Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient"
-args = ["mcp"]
-cwd = "."
-enabled = false
-
-[desktop]
-conversationDetailMode = "STEPS_COMMANDS"
-ambient-suggestions-enabled = true
-appearanceTheme = "dark"
-show-context-window-usage = true
-followUpQueueMode = "queue"
-composerEnterBehavior = "cmdAlways"
-dock-icon-preference = "codex-system"
-
-[projects."/Users/ye/Documents/Codex/2026-06-08/zsh-oh-my-zsh"]
-trust_level = "trusted"
-
-[projects."/Users/ye/Documents/Codex/2026-06-22/codex-codex"]
-trust_level = "trusted"
-
-[projects."/Users/ye/Documents/Codex/2026-06-22/codex-codex-2"]
-trust_level = "trusted"
-
-[projects."/Users/ye/Documents/Codex/2026-06-22/figma-app-connector-68df038e0ba48191908c8434991bbac2-resume-https"]
-trust_level = "trusted"
-
-[projects."/Users/ye/Documents/Codex/2026-06-22/figma-app-connector-68df038e0ba48191908c8434991bbac2-resume-https-2"]
-trust_level = "trusted"
-
-[projects."/Users/ye/Documents/Codex/2026-06-22/figma-app-connector-68df038e0ba48191908c8434991bbac2-resume-https-3"]
-trust_level = "trusted"
-
-[projects."/Users/ye/Documents/Codex/2026-06-24/new-chat"]
-trust_level = "trusted"
-
-[projects."/Users/ye/Documents/renerr"]
-trust_level = "trusted"
-
-[projects."/Users/ye/code/renerr"]
-trust_level = "trusted"
-
-[projects."/Users/ye/code/renarr"]
-trust_level = "trusted"
-
-[projects."/Users/ye/.codex"]
-trust_level = "trusted"
-
-[projects."/Users/ye/Library/CloudStorage/OneDrive-共享的库-oneDrive/Documents/01 Work/03 浙江大学/002 月度总结"]
-trust_level = "trusted"
-
-[projects."/Users/ye/Documents/Codex/2026-07-03/n"]
-trust_level = "trusted"
-
-[hooks.state]
-
-[hooks.state."/Users/ye/code/renarr/.codex/hooks.json:post_tool_use:0:0"]
-trusted_hash = "sha256:3e5625b276f45215623a7985900546a07e178d7a9a42f783e2a0de601a5aa585"
+[mcp_servers.playwright]
+command = "npx"
+args = ["@playwright/mcp@latest"]

@@ -2,6 +2,17 @@
 
 ## 2026-07-15
 
+### Added
+
+- `instructions/dotfile/auth.md` — auth setup guide for GitHub PAT, Context7 API Key, Playwright, and Web Search (Codex + OpenCode)
+- `.codex/config.toml` — MCP servers: context7 (remote + CONTEXT7_API_KEY), github (npx local + PAT), playwright (npx local)
+- `.config/opencode/opencode.jsonc` — MCP servers: github (remote + readonly), playwright (local); permissions: `github_*`, `playwright_*` allow
+
+### Changed
+
+- `.config/opencode/opencode.jsonc` — deny `.pem`/`.key` in `read` and `edit` to align with Codex
+- `README.md` — added Auth Setup link to Quick Links
+
 ### Removed
 
 - `.config/zsh/zshrc.local.example` — no longer needed; local config goes in

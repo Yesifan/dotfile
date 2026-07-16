@@ -5,6 +5,18 @@ personality = "pragmatic"
 approval_policy = "on-request"
 default_permissions = "development"
 
+[tui]
+status_line = [
+  "model-with-reasoning",
+  "current-dir",
+  "permissions",
+  "context-used",
+  "weekly-limit",
+  "total-input-tokens",
+  "total-output-tokens",
+]
+status_line_use_colors = true
+
 [features.network_proxy]
 enabled = true
 
@@ -69,6 +81,8 @@ allow_local_binding = true
 
 "nodejs.org" = "allow"
 "**.nodejs.org" = "allow"
+
+"**.opencode.ai" = "allow"
 
 [mcp_servers.context7]
 url = "https://mcp.context7.com/mcp"

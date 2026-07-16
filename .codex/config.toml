@@ -5,24 +5,23 @@ personality = "pragmatic"
 approval_policy = "on-request"
 default_permissions = "development"
 
-[agents]
-max_threads = 6
-max_depth = 1
-
-[features]
-network_proxy = true
+[features.network_proxy]
+enabled = true
 
 [features.multi_agent_v2]
 enabled = true
+max_concurrent_threads_per_session = 4
 multi_agent_mode_hint_text = """
 Use a sub - agent to execute the task when the intermediate execution 
 steps of the task have no persistent value and only the final result matters.
 
-Use the awaiter agent to execute commands/scripts that may take a long time to run.
+Use the waiter agent to execute commands/scripts that may take a long time to run.
 
 Prefer to use fork_turns = "none" to save tokens.
 """
-expose_spawn_agent_model_overrides = false
+
+[agents]
+max_depth = 1
 
 [permissions.development]
 description = "Normal local development with workspace write access, pnpm global access, and limited network."

@@ -14,7 +14,14 @@ network_proxy = true
 
 [features.multi_agent_v2]
 enabled = true
-multi_agent_mode_hint_text = "Use a sub - agent to execute the task when the intermediate execution steps of the task have no persistent value and only the final result matters.Use the awaiter agent to execute commands/scripts that may take a long time to run."
+multi_agent_mode_hint_text = """
+Use a sub - agent to execute the task when the intermediate execution 
+steps of the task have no persistent value and only the final result matters.
+
+Use the awaiter agent to execute commands/scripts that may take a long time to run.
+
+Prefer to use fork_turns = "none" to save tokens.
+"""
 expose_spawn_agent_model_overrides = false
 
 [permissions.development]

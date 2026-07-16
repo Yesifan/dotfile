@@ -138,7 +138,7 @@
     "external_directory": {
       "/tmp/**": "allow",
       "/var/tmp/**": "allow",
-      "*": "ask"
+      "~/.agents/skills/": "allow"
     },
     "doom_loop": "ask"
   },
@@ -176,7 +176,10 @@
     },
     "playwright": {
       "type": "local",
-      "command": ["npx", "@playwright/mcp@latest"],
+      "command": [
+        "npx",
+        "@playwright/mcp@latest"
+      ],
       "enabled": true
     }
   }

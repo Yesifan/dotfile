@@ -15,8 +15,11 @@ Managed with a bare Git repository at `$HOME/.cfg`. Works on macOS and Linux.
 | Codex CLI | `~/.codex/*`                       |
 | OpenCode  | `~/.config/opencode/*`             |
 
-`~/.zshrc` is a thin entrypoint with a ` =========remote config============ ` / ` =========remote end============== ` marker pair; shared
-shell behavior lives in `~/.config/zsh/zshrc`. All optional tool initialization
+`~/.zshrc` uses a ` =========remote config============ ` / ` =========remote end============== ` marker pair.
+`.codex/config.toml` uses `# ---- Local-only additions below ----`.
+`.config/opencode/opencode.jsonc` uses `// ======= local config ===` / `// ======= local config end ===`.
+Content above the marker is repo-managed; content below is machine-local (never push).
+Shared shell behavior lives in `~/.config/zsh/zshrc`. All optional tool initialization
 is guarded by `command -v` so a fresh machine can load the shell before tools
 are installed.
 
@@ -150,9 +153,9 @@ Only explicitly added files — never use `dgit add -u`:
 ~/.config/starship.toml
 ~/.vimrc
 ~/.tmux.conf
-~/.codex/*
+~/.codex/*                        # only content above `# ---- Local-only additions below ----`
 ~/.agents/.skill-lock.json
-~/.config/opencode/*
+~/.config/opencode/*              # only content above `// ======= local config ===`
 instructions/dotfile/*
 ```
 
@@ -163,19 +166,53 @@ instructions/dotfile/*
 ~/.ssh/config                      # machine-specific SSH hosts/proxy
 ~/.npmrc                           # npm registry, auth tokens
 ~/.gitconfig                       # personal git identity
-~/.zshrc content outside remote config block  # local PATH, aliases, env vars
-*.pem, *.key, .proxyenv            # secrets — never enter the repo
+~/.zshrc content outside remote config block          # local PATH, aliases, env vars
+~/.codex/config.toml content below local-only marker  # project trusts, connectors, local TUI
+~/.config/opencode/* content below local config marker # local-only MCP servers
+*.pem, *.key, .proxyenv                               # secrets — never enter the repo
 ```
 
 ### Conflict Resolution
 
-| File                                                                | Owner          | Strategy                                                 |
+| File / Section                                                      | Owner          | Strategy                                                 |
 | ------------------------------------------------------------------- | -------------- | -------------------------------------------------------- |
 | `.zshrc` — inside ` =========remote config============ ` block      | remote         | remote takes precedence (theirs)                         |
 | `.zshrc` — outside remote config block                              | local          | preserve local (ours), never commit                      |
+| `.codex/config.toml` — above `# ---- Local-only additions below ----` | remote       | remote takes precedence (theirs)                         |
+| `.codex/config.toml` — below that marker                            | local          | preserve local (ours), never commit                      |
+| `.config/opencode/opencode.jsonc` — above `// ======= local config ===` | remote      | remote takes precedence (theirs)                         |
+| `.config/opencode/opencode.jsonc` — below that marker               | local          | preserve local (ours), never commit                      |
 | `.zprofile`, `.ssh/config`, `.npmrc`, `.gitconfig`                  | local          | never in repo                                            |
-| `.codex/config.toml`, `.config/opencode/opencode.jsonc`             | shared         | merge — if conflict, resolve manually by the user        |
 | `.agents/.skill-lock.json`                                          | remote + local | merge — local installs preserved alongside repo entries |
+
+### Local-Only Commits
+
+Local machines carry machine-specific config below the markers. To stay
+in sync with origin without pushing local data:
+
+1. Keep `main` exactly **1 commit ahead** of `origin/main`.
+2. That single commit contains **all** local additions, with message:
+   ```
+   LOCAL: <summary of all local configs> [never push]
+   ```
+3. After `dgit fetch origin`, replay your local commit on the new remote:
+
+   ```sh
+   # If exactly 1 commit ahead, fast-forward:
+   dgit rebase origin/main
+
+   # If diverged or rebase conflicts:
+   dgit reset --soft origin/main     # discard old LOCAL commit, keep changes staged
+   dgit commit --amend -m "LOCAL: <summary> [never push]"   # re-create single commit
+   ```
+
+   After rebase, `dgit log --oneline --graph -3` should show:
+   ```
+   * [hash] (HEAD -> main) LOCAL: ... [never push]
+   * [hash] (origin/main) ...
+   ```
+
+4. **Never push the LOCAL commit.**
 
 ### Daily Operations
 

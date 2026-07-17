@@ -64,14 +64,14 @@
       "installedAt": "2026-07-07T06:15:19.811Z",
       "updatedAt": "2026-07-15T06:10:20.629Z"
     },
-    "oc-delegate-opsx": {
+    "opsx-implementer": {
       "source": "Yesifan/delegate-skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/Yesifan/delegate-skills.git",
-      "skillPath": "skills/oc-delegate-opsx/SKILL.md",
-      "skillFolderHash": "807bb83ea1a1dbd0c4740af9b7b33018744a087c",
-      "installedAt": "2026-07-14T07:36:56.563Z",
-      "updatedAt": "2026-07-15T06:10:25.237Z"
+      "skillPath": "skills/opsx-implementer/SKILL.md",
+      "skillFolderHash": "324a051bc60818a2d79ba6d0b662a04e115ca25e",
+      "installedAt": "2026-07-17T01:31:07.669Z",
+      "updatedAt": "2026-07-17T01:45:34.870Z"
     }
   },
   "dismissed": {

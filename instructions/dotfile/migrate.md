@@ -42,20 +42,72 @@ dgit diff --cached --name-only
 
 Never commit: private keys, tokens, credentials, `.proxyenv`, `.zprofile`,
 `.gitconfig`, local additions below the `# =========remote end==============` marker in
-`.zshrc`.
+`.zshrc`, local additions below `# ---- Local-only additions below ----` in
+`.codex/config.toml`, and local additions below `// ======= local config ===` in
+`.config/opencode/opencode.jsonc`.
+
+## Pushing Managed Changes Only
+
+When local config files have both managed and local-only sections, do not
+push directly from the working tree (risk of leaking local config).
+Use an isolated tmp repo to strip local content before pushing.
+
+### Safe workflow — isolate in /tmp
+
+1. Clone a temporary bare repo:
+
+   ```sh
+   mkdir -p /tmp/dotfile-merge
+   git clone --bare git@github.com:Yesifan/dotfile.git /tmp/dotfile-merge/dotfile.git
+   mkdir -p /tmp/dotfile-merge/worktree
+   git --git-dir=/tmp/dotfile-merge/dotfile.git \
+       --work-tree=/tmp/dotfile-merge/worktree checkout -f main
+   ```
+
+2. For each file with local-only sections, extract only the managed content:
+
+   ```sh
+   # .zshrc — copy full file then strip content below # =========remote end==============
+   # .codex/config.toml — extract above # ---- Local-only additions below ----
+   sed '/^# ---- Local-only additions below ----$/q' ~/.codex/config.toml \
+     | head -n -1 > /tmp/dotfile-merge/worktree/.codex/config.toml
+   # .config/opencode/opencode.jsonc — extract above // ======= local config ===
+   sed '/\/\/ ======= local config ===$/q' ~/.config/opencode/opencode.jsonc \
+     | head -n -1 > /tmp/dotfile-merge/worktree/.config/opencode/opencode.jsonc
+   ```
+
+3. **Verify structural integrity** — extracted files must be valid:
+
+   ```sh
+   python3 -c "import toml; toml.load(open('/tmp/dotfile-merge/worktree/.codex/config.toml'))" 2>&1
+   python3 -c "import json; json.load(open('/tmp/dotfile-merge/worktree/.config/opencode/opencode.jsonc'))" 2>&1
+   ```
+
+   ⚠️ JSON files extracted with `sed` may end with a dangling comma or missing
+   closing braces (`} }`). Fix manually before proceeding.
+
+4. Commit and push:
+
+   ```sh
+   git --git-dir=/tmp/dotfile-merge/dotfile.git --work-tree=/tmp/dotfile-merge/worktree add -A
+   git --git-dir=/tmp/dotfile-merge/dotfile.git --work-tree=/tmp/dotfile-merge/worktree commit -m "..."
+   git --git-dir=/tmp/dotfile-merge/dotfile.git push origin main
+   ```
+
+5. Sync local repo:
+
+   ```sh
+   dgit fetch origin
+   dgit reset --soft origin/main
+   dgit commit --amend -m "LOCAL: <summary> [never push]"
+   ```
 
 ## Updating an Existing Machine
 
+### No local commit (clean main)
+
 ```zsh
 dgit pull --rebase origin main
-```
-
-If there are local changes, stash first:
-
-```zsh
-dgit stash push -m "local changes"
-dgit pull origin main
-dgit stash pop
 ```
 
 After pulling, install any missing tools for that platform. On Ubuntu the apt
@@ -74,7 +126,32 @@ After pulling, check whether the update includes a breaking change. If
 `dgit log -1 --format=%s` matches a hash in the **Breaking updates** section of
 this file, follow that section's migration plan before reloading the shell.
 
+### With local commit (main is 1 ahead, LOCAL [never push])
+
+```sh
+dgit fetch origin
+dgit rebase origin/main                # replay LOCAL commit on new remote
+```
+
+If the rebase succeeds, the LOCAL commit moves on top of the new origin/main.
+
+If the rebase fails or you need a clean slate:
+
+```sh
+dgit reset --soft origin/main          # discard old LOCAL commit, keep changes staged
+<resolve any working tree conflicts>
+dgit commit --amend -m "LOCAL: <summary> [never push]"
+```
+
+Verify the topology:
+
+```sh
+dgit log --oneline --graph -3          # local 1 ahead of origin/main
+```
+
 ---
+
+
 
 ## Migration Guide
 
@@ -83,15 +160,27 @@ and per-commit migration plans for breaking changes.
 
 ### Conventions
 
--   `.zshrc` uses a `# =========remote config============` / `# =========remote end==============`
-    marker pair. Content **inside** the block is managed by the repo — prefer remote ("theirs")
-    on conflict. Content **outside** the block is machine-local — preserve local ("ours"),
-    never commit.
--   For `.codex/config.toml` and `.config/opencode/opencode.jsonc`: merge normally.
-    If a conflict arises, resolve manually by the user.
--   Use `dgit pull --rebase origin main` for most updates. If a merge is needed
-    (e.g. diverging histories), use `dgit fetch origin && dgit merge origin/main`
-    and resolve conflicts according to the rules above.
+-   **Marker rules** — Each file with mixed content uses markers to separate
+    managed and local sections:
+
+    | File | Marker | Above marker | Below marker |
+    |------|--------|-------------|-------------|
+    | `.zshrc` | `# =========remote config====` / `# =========remote end======` | remote (theirs) | local (ours), never commit |
+    | `.codex/config.toml` | `# ---- Local-only additions below ----` | remote (theirs) | local (ours), never commit |
+    | `.config/opencode/opencode.jsonc` | `// ======= local config ===` / `// ======= local config end ===` | remote (theirs) | local (ours), never commit |
+
+-   **Local branch convention** — Each machine keeps `main` exactly **1 commit ahead**
+    of `origin/main`. That single commit contains all local additions, with message:
+    `LOCAL: <summary> [never push]`.
+
+-   After `dgit fetch origin`, the local commit must be replayed:
+
+    ```sh
+    dgit reset --soft origin/main
+    dgit commit --amend -m "LOCAL: ... [never push]"
+    ```
+
+-   **Never push the LOCAL commit.**
 -   After each step, reload shell: `exec zsh -l`.
 
 ### Migrating to fa12020 baseline

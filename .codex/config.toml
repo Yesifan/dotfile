@@ -1,9 +1,15 @@
+# 这份 codex 用于在 mac/linux 环境下共享
+# 使用 profiles 配置权限，参考 https://learn.chatgpt.com/docs/permissions
+
 model = "gpt-5.6-terra"
 model_reasoning_effort = "medium"
-personality = "pragmatic"
 
+default_permissions = "dev"
 approval_policy = "on-request"
-default_permissions = "development"
+
+model_verbosity = "low"             # 输出极简
+personality = "pragmatic"           # 务实风格
+model_reasoning_summary = "concise" # 简短摘要
 
 [tui]
 status_line = [
@@ -22,82 +28,97 @@ enabled = true
 
 [features.multi_agent_v2]
 enabled = true
-max_concurrent_threads_per_session = 4
+max_concurrent_threads_per_session = 6
 multi_agent_mode_hint_text = """
-Use a sub - agent to execute the task when the intermediate execution 
+Use a subagent to execute the task when the intermediate execution 
 steps of the task have no persistent value and only the final result matters.
 
-Use the waiter agent to execute commands/scripts that may take a long time to run.
+If the context of the tasks may be the same, you should obtain the context first and then delegate.
 
-Prefer to use fork_turns = "none" to save tokens.
+Use the waiter agent to wait for long-running command（like install, ci, agent_cli etc.）.
 """
 
 [agents]
 max_depth = 1
 
-[permissions.development]
-description = "Normal local development with workspace write access, pnpm global access, and limited network."
+# permissions
+
+[permissions.dev]
+description = "Normal local dev"
 extends = ":workspace"
 
-[permissions.development.filesystem]
+[permissions.dev.filesystem]
 glob_scan_max_depth = 8
 
-"~/.npm" = "write"
-"~/.nvm/versions/node" = "read"
+":minimal" = "read"
+
+# MAC
 "~/Library/pnpm" = "write"
 "~/Library/Caches/pnpm" = "write"
 
-"~/.local/share/opencode" = "write"
-"~/.local/share/pnpm/store" = "write"
-"~/.cache/ms-playwright" = "write"
-"~/.cache/puppeteer" = "write"
-"~/.cache/Cypress" = "write"
-"~/.cache/uv" = "write"
+# Linux
+"~/.npm" = "write"
+"~/.nvm/versions/node" = "read"
 
-[permissions.development.filesystem.":workspace_roots"]
+"~/.cache/uv" = "write"
+"~/.cache/Cypress" = "write"
+"~/.cache/puppeteer" = "write"
+"~/.cache/ms-playwright" = "write"
+"~/.local/share/pnpm/store" = "write"
+
+"~/.local/share/opencode" = "write"
+
+
+[permissions.dev.filesystem.":workspace_roots"]
 "." = "write"
+".git" = "write"
+".git/**" = "write"
 "*.pem" = "deny"
 "**/*.pem" = "deny"
 
 "*.key" = "deny"
 "**/*.key" = "deny"
 
-[permissions.development.network]
+[permissions.dev.network]
 enabled = true
+enable_socks5 = true
 mode = "full"
 allow_local_binding = true
 
-[permissions.development.network.domains]
+
+[permissions.dev.network.domains]
 "localhost" = "allow"
 "127.0.0.1" = "allow"
 "::1" = "allow"
 
+"nodejs.org" = "allow"
+"**.nodejs.org" = "allow"
 "registry.npmjs.org" = "allow"
+"registry.npmmirror.com" = "allow"
 
 "github.com" = "allow"
 "api.github.com" = "allow"
 "codeload.github.com" = "allow"
 "**.githubusercontent.com" = "allow"
 
-"nodejs.org" = "allow"
-"**.nodejs.org" = "allow"
-
+"**.openai.com" = "allow"
 "**.opencode.ai" = "allow"
+
+# Playwright browser downloads
+"cdn.playwright.dev" = "allow"
+# Common CDN used by frontend examples/docs
+"cdn.jsdelivr.net" = "allow"
+
+[permissions.dev.network.unix_sockets]
+"/var/run/docker.sock" = "allow"
+
+# MCP
 
 [mcp_servers.context7]
 url = "https://mcp.context7.com/mcp"
-enabled = true
-
-[mcp_servers.context7.http_headers]
-CONTEXT7_API_KEY = "{env:CONTEXT7_API_KEY}"
-
-[mcp_servers.github]
-command = "npx"
-args = ["-y", "@modelcontextprotocol/server-github"]
-
-[mcp_servers.github.env]
-GITHUB_PERSONAL_ACCESS_TOKEN = "{env:GITHUB_PERSONAL_ACCESS_TOKEN}"
+bearer_token_env_var = "CONTEXT7_API_KEY"
 
 [mcp_servers.playwright]
-command = "npx"
-args = ["@playwright/mcp@latest"]
+command = "pnpm"
+args = ["dlx", "-y", "@playwright/mcp@latest"]
+

@@ -15,7 +15,7 @@ Managed with a bare Git repository at `$HOME/.cfg`. Works on macOS and Linux.
 | Codex CLI | `~/.codex/*`                       |
 | OpenCode  | `~/.config/opencode/*`             |
 
-`~/.zshrc` is a thin entrypoint with a `LOCAL CONFIG BELOW` separator; shared
+`~/.zshrc` is a thin entrypoint with a ` =========remote config============ ` / ` =========remote end============== ` marker pair; shared
 shell behavior lives in `~/.config/zsh/zshrc`. All optional tool initialization
 is guarded by `command -v` so a fresh machine can load the shell before tools
 are installed.
@@ -117,7 +117,7 @@ brew install starship zoxide fzf zsh-autosuggestions zsh-syntax-highlighting tmu
 | `CONTEXT7_API_KEY`             | Context7 API Key for Codex + OpenCode MCP           |
 | `OPENCODE_ENABLE_EXA=1`        | OpenCode Web Search (non-OpenCode Provider 时需要)  |
 
-Add to `~/.zshrc` below the `LOCAL CONFIG BELOW` separator. See [agent.md](instructions/dotfile/agent.md) for setup details.
+Add to `~/.zshrc` below the `# =========remote end==============` marker. See [agent.md](instructions/dotfile/agent.md) for setup details.
 
 ### 5. Verify
 
@@ -143,7 +143,7 @@ See [agent.md](instructions/dotfile/agent.md) for the full skill list.
 Only explicitly added files — never use `dgit add -u`:
 
 ```
-~/.zshrc                          # only content above LOCAL CONFIG BELOW
+~/.zshrc                          # only content inside the remote config block
 ~/.config/zsh/zshrc
 ~/.config/git/config
 ~/.config/ghostty/config.ghostty
@@ -163,7 +163,7 @@ instructions/dotfile/*
 ~/.ssh/config                      # machine-specific SSH hosts/proxy
 ~/.npmrc                           # npm registry, auth tokens
 ~/.gitconfig                       # personal git identity
-~/.zshrc content below LOCAL CONFIG BELOW  # local PATH, aliases, env vars
+~/.zshrc content outside remote config block  # local PATH, aliases, env vars
 *.pem, *.key, .proxyenv            # secrets — never enter the repo
 ```
 
@@ -171,10 +171,10 @@ instructions/dotfile/*
 
 | File                                                                | Owner          | Strategy                                                 |
 | ------------------------------------------------------------------- | -------------- | -------------------------------------------------------- |
-| Repo-managed parts of tracked files (e.g. `.zshrc` above separator) | remote         | remote takes precedence (theirs)                         |
-| `.zshrc` content below the separator                                | local          | preserve local (ours)                                    |
+| `.zshrc` — inside ` =========remote config============ ` block      | remote         | remote takes precedence (theirs)                         |
+| `.zshrc` — outside remote config block                              | local          | preserve local (ours), never commit                      |
 | `.zprofile`, `.ssh/config`, `.npmrc`, `.gitconfig`                  | local          | never in repo                                            |
-| `.codex/config.toml`, `.config/opencode/opencode.jsonc`             | remote + local | matching keys use repo version; local-only keys are kept |
+| `.codex/config.toml`, `.config/opencode/opencode.jsonc`             | shared         | merge — if conflict, resolve manually by the user        |
 | `.agents/.skill-lock.json`                                          | remote + local | merge — local installs preserved alongside repo entries |
 
 ### Daily Operations

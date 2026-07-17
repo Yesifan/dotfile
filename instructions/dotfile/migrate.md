@@ -41,7 +41,7 @@ dgit diff --cached --name-only
 ```
 
 Never commit: private keys, tokens, credentials, `.proxyenv`, `.zprofile`,
-`.gitconfig`, local additions below the `LOCAL CONFIG BELOW` separator in
+`.gitconfig`, local additions below the `# =========remote end==============` marker in
 `.zshrc`.
 
 ## Updating an Existing Machine
@@ -83,15 +83,15 @@ and per-commit migration plans for breaking changes.
 
 ### Conventions
 
--   Local always aligns to remote. Never create branches; never let local
-    diverge from origin.
--   Always `dgit pull --rebase origin main` (no merge commits).
--   Conflict default rule: anything ABOVE the `LOCAL CONFIG BELOW`
-    separator in `~/.zshrc` (and all other repo-tracked files) is
-    repo-managed — prefer remote ("theirs"). Anything BELOW the
-    separator in `~/.zshrc` is machine-local — preserve local ("ours").
--   For `.codex/config.toml` and `.config/opencode/opencode.jsonc`: same
-    config keys use the repo version; local-only keys are preserved.
+-   `.zshrc` uses a `# =========remote config============` / `# =========remote end==============`
+    marker pair. Content **inside** the block is managed by the repo — prefer remote ("theirs")
+    on conflict. Content **outside** the block is machine-local — preserve local ("ours"),
+    never commit.
+-   For `.codex/config.toml` and `.config/opencode/opencode.jsonc`: merge normally.
+    If a conflict arises, resolve manually by the user.
+-   Use `dgit pull --rebase origin main` for most updates. If a merge is needed
+    (e.g. diverging histories), use `dgit fetch origin && dgit merge origin/main`
+    and resolve conflicts according to the rules above.
 -   After each step, reload shell: `exec zsh -l`.
 
 ### Migrating to fa12020 baseline
@@ -196,8 +196,8 @@ done
     ```
 
     Any other local PATH/alias/content from the backup `.zshrc` or
-    `.zshenv` goes below the `LOCAL CONFIG BELOW` separator once the
-    machine reaches `cc9c297` (next section).
+    `.zshenv` goes below the `# =========remote end==============` marker
+    in `.zshrc`.
 
 3.  (Optional) Restore `~/.npmrc` from backup if the machine needs it:
 
@@ -245,7 +245,7 @@ dgit rebase --abort
 dgit fetch origin
 dgit reset --hard origin/main
 # Then re-apply any machine-local blocks to ~/.zshrc below the
-# LOCAL CONFIG BELOW separator from your backup.
+# =========remote end============== marker from your backup.
 ```
 
 ### Breaking updates (per-commit migration list, newest first)
@@ -305,25 +305,26 @@ cp ~/.zshrc /tmp/dotfile-migrate/zshrc
 2.  Resolve `~/.zshrc` conflict:
 
     -   Open `~/.zshrc`.
-    -   Keep the **remote** version as the top section — verify it
-        contains the new header, the `source ...zshrc` line, and the
-        `LOCAL CONFIG BELOW` separator. It should NOT have `zshrc.local`
+    -   Keep the **remote** version **inside** the
+        `# =========remote config============` / `# =========remote end==============`
+        block — verify it contains the new header, the `source ...zshrc`
+        line, and the remote markers. It should NOT have `zshrc.local`
         or `.zshalias` source lines.
     -   From the backup file `/tmp/dotfile-migrate/zshrc`, find the
-        machine-local blocks that were appended below the old source
-        section: proxy exports, `opencode` PATH, `Codex CLI` PATH,
-        `pnpm` block, and any custom aliases.
-    -   Append each block BELOW the `LOCAL CONFIG BELOW` separator,
-        preserving any `command -v` or `[[ -r ... ]]` guards. Order:
+        machine-local blocks: proxy exports, `opencode` PATH, `Codex CLI`
+        PATH, `pnpm` block, and any custom aliases.
+    -   Append each block BELOW the `# =========remote end==============`
+        marker, preserving any `command -v` or `[[ -r ... ]]` guards.
+        Order:
         1. Proxy exports (commented if previously commented)
         2. PATH additions
         3. Tool inits (`nvm`, `pnpm`, etc.)
         4. Aliases
     -   Also check `/tmp/dotfile-migrate/zshrc.local` — its nvm and
-        pnpm blocks should be migrated to `~/.zshrc` below the
-        separator, guarded by the same conditions.
+        pnpm blocks should be migrated below the marker, guarded by the
+        same conditions.
     -   Also check `/tmp/dotfile-migrate/zshalias` — its Tailscale
-        alias (or any alias) should be appended below the separator,
+        alias (or any alias) should be appended below the marker,
         guarded by `[[ -x ... ]]`.
     -   Save, then mark resolved and continue:
 

@@ -1,8 +1,5 @@
-# 这份 codex 用于在 mac/linux 环境下共享
-# 使用 profiles 配置权限，参考 https://learn.chatgpt.com/docs/permissions
-
-model = "gpt-5.6-terra"
-model_reasoning_effort = "medium"
+model = "gpt-5.6-sol"
+model_reasoning_effort = "low"
 
 default_permissions = "dev"
 approval_policy = "on-request"
@@ -81,39 +78,17 @@ glob_scan_max_depth = 8
 
 [permissions.dev.network]
 enabled = true
-enable_socks5 = true
-mode = "full"
 allow_local_binding = true
-
 
 [permissions.dev.network.domains]
 "localhost" = "allow"
 "127.0.0.1" = "allow"
 "::1" = "allow"
 
-"nodejs.org" = "allow"
-"**.nodejs.org" = "allow"
-"registry.npmjs.org" = "allow"
-"registry.npmmirror.com" = "allow"
-
-"github.com" = "allow"
-"api.github.com" = "allow"
-"codeload.github.com" = "allow"
-"**.githubusercontent.com" = "allow"
-
-"**.openai.com" = "allow"
-"**.opencode.ai" = "allow"
-
-# Playwright browser downloads
-"cdn.playwright.dev" = "allow"
-# Common CDN used by frontend examples/docs
-"cdn.jsdelivr.net" = "allow"
-
 [permissions.dev.network.unix_sockets]
 "/var/run/docker.sock" = "allow"
 
 # MCP
-
 [mcp_servers.context7]
 url = "https://mcp.context7.com/mcp"
 bearer_token_env_var = "CONTEXT7_API_KEY"
@@ -121,4 +96,3 @@ bearer_token_env_var = "CONTEXT7_API_KEY"
 [mcp_servers.playwright]
 command = "pnpm"
 args = ["dlx", "-y", "@playwright/mcp@latest"]
-

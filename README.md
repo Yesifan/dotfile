@@ -116,7 +116,6 @@ brew install starship zoxide fzf zsh-autosuggestions zsh-syntax-highlighting tmu
 
 | Variable                       | Purpose                                             |
 | ------------------------------ | --------------------------------------------------- |
-| `GITHUB_PERSONAL_ACCESS_TOKEN` | GitHub PAT for Codex + OpenCode MCP                 |
 | `CONTEXT7_API_KEY`             | Context7 API Key for Codex + OpenCode MCP           |
 | `OPENCODE_ENABLE_EXA=1`        | OpenCode Web Search (non-OpenCode Provider 时需要)  |
 
@@ -126,8 +125,6 @@ Add to `~/.zshrc` below the `# =========remote end==============` marker. See [a
 
 ```zsh
 exec zsh -l
-opencode mcp list       # should show github  connected
-codex mcp list          # should show github  connected
 ```
 
 ### 6. Install Agent Skills (optional)

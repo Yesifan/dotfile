@@ -5,8 +5,8 @@
 ### Added
 
 - `instructions/dotfile/agent.md` — auth setup + skills guide for Codex + OpenCode (replaces `auth.md`)
-- `.codex/config.toml` — MCP servers: context7 (remote + CONTEXT7_API_KEY), github (npx local + PAT), playwright (npx local)
-- `.config/opencode/opencode.jsonc` — MCP servers: github (remote + readonly), playwright (local); permissions: `github_*`, `playwright_*` allow
+- `.codex/config.toml` — MCP servers: context7 (remote + CONTEXT7_API_KEY), playwright (npx local)
+- `.config/opencode/opencode.jsonc` — MCP servers: playwright (local); permissions: `playwright_*` allow
 
 ### Changed
 

@@ -2,31 +2,6 @@
 
 ## MCP Servers
 
-### GitHub
-
-从 [GitHub](https://www.github.com) 获取：
-
-1. [Personal access tokens](https://github.com/settings/personal-access-tokens) → Fine-grained tokens → Generate new token
-2. Token name: `OpenCode GitHub MCP`
-3. Expiration: `30 days` 或 `90 days`
-4. Resource owner: 选你的 personal account
-5. Repository access: `All repositories`（或 `Only select repositories` 并勾选所需仓库）
-6. Permissions: 无需额外设置，所有仓库操作由 Repository access 控制
-7. Generate and copy the token
-
-设置环境变量并持久化到 `~/.zshrc`：
-
-```bash
-export GITHUB_PERSONAL_ACCESS_TOKEN="github_pat_..."
-```
-
-验证：
-
-```bash
-opencode mcp list       # 应看到 github  connected
-codex mcp list
-```
-
 ---
 
 ### Context7

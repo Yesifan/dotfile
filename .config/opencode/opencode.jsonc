@@ -2,6 +2,10 @@
   "$schema": "https://opencode.ai/config.json",
   "model": "opencode-go/deepseek-v4-flash",
   "small_model": "opencode/deepseek-v4-flash-free",
+  "server": {
+    "hostname": "0.0.0.0",
+    "port": 4096
+  },
   "default_agent": "plan",
   "agent": {
     "plan": {
@@ -118,13 +122,11 @@
       "npm run lint *": "allow",
       "npm install": "allow",
       "npm ci": "allow",
-      "pnpm install": "allow",
+      "pnpm add": "allow",
       "pnpm ci": "allow",
-      "pnpm run lint": "allow",
-      "pnpm run lint *": "allow",
+      "pnpn dlx *": "allow",
+      "pnpn run *": "allow",
       "yarn install": "allow",
-      "yarn run lint": "allow",
-      "yarn run lint *": "allow",
       "cargo build *": "allow",
       "cargo check *": "allow",
       "go build *": "allow",
@@ -161,6 +163,14 @@
     "max_bytes": 51200
   },
   "mcp": {
+    "playwright": {
+      "type": "local",
+      "command": [
+        "npx",
+        "@playwright/mcp@latest"
+      ],
+      "enabled": true
+    },
     "context7": {
       "type": "remote",
       "url": "https://mcp.context7.com/mcp",
@@ -169,13 +179,13 @@
       },
       "enabled": true
     },
-    "playwright": {
-      "type": "local",
-      "command": [
-        "npx",
-        "@playwright/mcp@latest"
-      ],
-      "enabled": true
+    "exa": {
+      "type": "remote",
+      "url": "https://mcp.exa.ai/mcp",
+      "enabled": true,
+      "headers": {
+        "x-api-key": "{env:EXA_API_KEY}"
+      }
     }
-  }
+  },
 }

@@ -1,5 +1,5 @@
-model = "gpt-5.6-sol"
-model_reasoning_effort = "low"
+model = "gpt-5.6-luna"
+model_reasoning_effort = "medium"
 
 default_permissions = "dev"
 approval_policy = "on-request"
@@ -20,20 +20,16 @@ status_line = [
 ]
 status_line_use_colors = true
 
+[features]
+js_repl = false
+workspace_dependencies = true
+
 [features.network_proxy]
 enabled = true
 
 [features.multi_agent_v2]
 enabled = true
 max_concurrent_threads_per_session = 6
-multi_agent_mode_hint_text = """
-Use a subagent to execute the task when the intermediate execution 
-steps of the task have no persistent value and only the final result matters.
-
-If the context of the tasks may be the same, you should obtain the context first and then delegate.
-
-Use the waiter agent to wait for long-running command（like install, ci, agent_cli etc.）.
-"""
 
 [agents]
 max_depth = 1
@@ -81,9 +77,50 @@ enabled = true
 allow_local_binding = true
 
 [permissions.dev.network.domains]
+"::1" = "allow"
 "localhost" = "allow"
 "127.0.0.1" = "allow"
-"::1" = "allow"
+
+
+# ----------------------------------------
+# npm / pnpm：依赖解析、下载、audit、发布
+# ----------------------------------------
+"www.npmjs.com" = "allow"
+"registry.npmjs.org" = "allow"
+"registry.npmmirror.com" = "allow"
+"cdn.npmmirror.com" = "allow"
+
+# ----------------------------------------
+# Python / pip / uv：PyPI 依赖
+# ----------------------------------------
+"pypi.org" = "allow"
+"files.pythonhosted.org" = "allow"
+"upload.pypi.org" = "allow"
+"bootstrap.pypa.io" = "allow"
+
+# ----------------------------------------
+# Node.js / pnpm / uv / Python 工具链安装
+# ----------------------------------------
+"nodejs.org" = "allow"
+"get.pnpm.io" = "allow"
+"astral.sh" = "allow"
+"downloads.python.org" = "allow"
+"www.python.org" = "allow"
+
+# ----------------------------------------
+# GitHub：Git 依赖、uv Python、Release 二进制
+# ----------------------------------------
+"github.com" = "allow"
+"api.github.com" = "allow"
+"codeload.github.com" = "allow"
+"**.githubusercontent.com" = "allow"
+
+# ----------------------------------------
+# 可选：uv Docker 镜像、GitHub Container Registry
+# ----------------------------------------
+"ghcr.io" = "allow"
+"pkg-containers.githubusercontent.com" = "allow"
+
 
 [permissions.dev.network.unix_sockets]
 "/var/run/docker.sock" = "allow"
@@ -92,7 +129,9 @@ allow_local_binding = true
 [mcp_servers.context7]
 url = "https://mcp.context7.com/mcp"
 bearer_token_env_var = "CONTEXT7_API_KEY"
+default_tools_approval_mode = "approve"
 
 [mcp_servers.playwright]
 command = "pnpm"
 args = ["dlx", "-y", "@playwright/mcp@latest"]
+default_tools_approval_mode = "approve"

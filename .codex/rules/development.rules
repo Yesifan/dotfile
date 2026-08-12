@@ -227,6 +227,8 @@ prefix_rule(
     pattern = [
         "pnpm",
         [
+            "add",
+            "install",
             "check",
             "lint",
             "test",

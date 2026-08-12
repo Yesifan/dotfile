@@ -114,12 +114,12 @@ brew install starship zoxide fzf zsh-autosuggestions zsh-syntax-highlighting tmu
 
 ### 4. Set up environment variables
 
-| Variable                       | Purpose                                             |
-| ------------------------------ | --------------------------------------------------- |
-| `CONTEXT7_API_KEY`             | Context7 API Key for Codex + OpenCode MCP           |
-| `OPENCODE_ENABLE_EXA=1`        | OpenCode Web Search (non-OpenCode Provider 时需要)  |
+| Variable           | Required when      | Purpose                   |
+| ------------------ | ------------------ | ------------------------- |
+| `CONTEXT7_API_KEY` | Using Context7 MCP | Context7 API access       |
+| `EXA_API_KEY`      | Using the Exa MCP  | Exa web search API access |
 
-Add to `~/.zshrc` below the `# =========remote end==============` marker. See [agent.md](instructions/dotfile/agent.md) for setup details.
+Add only the variables you use to `~/.zshrc` below the `# =========remote end==============` marker. The values are machine-local secrets and must not be committed. `EXA_API_KEY` is read directly by the Exa MCP; `OPENCODE_ENABLE_EXA` is no longer needed. See [agent.md](instructions/dotfile/agent.md) for setup details.
 
 ### 5. Verify
 

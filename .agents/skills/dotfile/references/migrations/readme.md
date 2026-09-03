@@ -18,12 +18,13 @@ Then:
 1. **Is it breaking?** The hash matches a `<githash>.md` file in this directory → yes. Read it and follow it **before** reloading the shell (`exec zsh -l`).
 2. **Not in the list?** It's an ordinary update — just `dgit pull --rebase origin main` (see [update.md](../update.md)).
 
-If a machine is still on an older commit (its `dgit log` doesn't yet contain the hash), you may need to apply several migrations **in order: oldest → newest** to reach the latest. For example, a machine before `fa12020` first runs [fa12020.md](fa12020.md), then [cc9c297.md](cc9c297.md), then any newer ones.
+If a machine is still on an older commit (its `dgit log` doesn't yet contain the hash), you may need to apply several migrations **in order: oldest → newest** to reach the latest. For example, a machine before `fa12020` applies [fa12020.md](fa12020.md) → [cc9c297.md](cc9c297.md) → [e8b9b3c.md](e8b9b3c.md), oldest first.
 
 | Hash | Subject |
 |------|---------|
-| [fa12020](fa12020.md) | baseline snapshot (one-shot for very old machines) |
+| [e8b9b3c](e8b9b3c.md) | refactor(zsh): shared shell config in ~/.config/shell, no ZDOTDIR |
 | [cc9c297](cc9c297.md) | refactor(zsh): fold local config into .zshrc separator |
+| [fa12020](fa12020.md) | baseline snapshot (one-shot for very old machines) |
 
 ## Conventions
 

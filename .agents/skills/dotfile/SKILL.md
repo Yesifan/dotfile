@@ -13,16 +13,18 @@ The whole system is built around one idea: **the repo owns all the shared config
 
 You are here to walk through the install, maintenance, and update flows. Read the reference for the task before acting, and lean on the rules below so you never leak local config into the repo or clobber a machine's local setup.
 
-> **Before installing or updating on a machine, sync this skill to the latest so the agent has current guidance:** `npx skills add Yesifan/dotfile`.
+> **Before installing or updating on a machine, sync this skill to the latest so the agent has current guidance:** `npx skills use YeSifan/dotfile@dotfile`.
 
 ## Two places this skill applies — pick the right commands
 
 There are two very different places you can be when "working on the dotfiles", and **the commands differ**. Read this first so you don't run `dgit` where you should run `git`, or vice-versa.
 
 ### Editing the dotfiles source repo (a normal clone)
-When you're inside the dotfiles repository as a git checkout — e.g. `/home/ye/code/dotfile` — you're authoring the repo's own *content*: config files, README/docs, `.agents/`, `.skill-lock.json`, these skill files. Use **plain `git`** here (`git status`, `git add <file>`, `git commit`, `git push origin main`, review with `git diff --cached`). The repo's checked-out files *are* the managed content, with no LOCAL blocks, so there are **no LOCAL blocks to preserve and no `/tmp` isolation needed**. The only rule that still applies: never commit secrets.
+
+When you're inside the dotfiles repository as a git checkout — e.g. `/home/ye/code/dotfile` — you're authoring the repo's own _content_: config files, README/docs, `.agents/`, `.skill-lock.json`, these skill files. Use **plain `git`** here (`git status`, `git add <file>`, `git commit`, `git push origin main`, review with `git diff --cached`). The repo's checked-out files _are_ the managed content, with no LOCAL blocks, so there are **no LOCAL blocks to preserve and no `/tmp` isolation needed**. The only rule that still applies: never commit secrets.
 
 ### Operating an installed machine's config (the **production** environment)
+
 When you're on a machine whose dotfiles are deployed as a bare repo at `$HOME/.cfg` with work-tree `$HOME`, you're touching the LIVE configuration (`~/.zshrc`, `~/.config/...`). Use **`dgit`** here. This is where LOCAL blocks, the `/tmp` isolated-clone push, the `LOCAL [never push]` commit convention, and the migration / `dgit pull` workflows all live.
 
 > **Everything in this skill's references (`install`, `maintain`, `update`, `migrations`, `conventions`) describes the production/machine path (`dgit`) — not the source repo.** If you are in the source repo, just use normal `git`; none of the LOCAL-block,/tmp/LOCAL-commit machinery applies.
@@ -41,15 +43,16 @@ When you are unsure what is tracked or how a file is split, start with [referenc
 
 ## Task selection
 
-| Job | Reference |
-|-----|-----------|
-| Set up the dotfiles on a new machine | [references/install.md](references/install.md) |
-| Make, review, commit, and safely push a change | [references/maintain.md](references/maintain.md) |
-| Update an existing machine (incl. breaking changes) | [references/update.md](references/update.md) |
-| Tracked vs untracked files, LOCAL blocks, conflict rules, LOCAL commit convention | [references/conventions.md](references/conventions.md) |
-| Per-commit migration plans for breaking updates | [references/migrations/readme.md](references/migrations/readme.md) |
-| Agent-side setup: env vars, MCP servers, skills tooling | [references/agents.md](references/agents.md) |
+| Job                                                                               | Reference                                                          |
+| --------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| Set up the dotfiles on a new machine                                              | [references/install.md](references/install.md)                     |
+| Make, review, commit, and safely push a change                                    | [references/maintain.md](references/maintain.md)                   |
+| Update an existing machine (incl. breaking changes)                               | [references/update.md](references/update.md)                       |
+| Tracked vs untracked files, LOCAL blocks, conflict rules, LOCAL commit convention | [references/conventions.md](references/conventions.md)             |
+| Per-commit migration plans for breaking updates                                   | [references/migrations/readme.md](references/migrations/readme.md) |
+| Agent-side setup: env vars, MCP servers, skills tooling                           | [references/agents.md](references/agents.md)                       |
+| Package special cases (tmux, Ghostty)                                            | [packages/tmux.md](references/packages/tmux.md), [packages/ghostty.md](references/packages/ghostty.md) |
 
-> All tables above are the **production / machine path** (`dgit` on `$HOME/.cfg`). Editing the **source repo** (a normal clone like `/home/ye/code/dotfile`) is plain `git` and is *not* in these references.
+> All tables above are the **production / machine path** (`dgit` on `$HOME/.cfg`). Editing the **source repo** (a normal clone like `/home/ye/code/dotfile`) is plain `git` and is _not_ in these references.
 
 > Invocation note: this skill is deliberately not auto-triggered from the system prompt (`disable-model-invocation: true`). Load it explicitly via the skill command or by telling the agent to use the dotfile skill.

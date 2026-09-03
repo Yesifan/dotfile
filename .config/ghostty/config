@@ -19,3 +19,6 @@ shell-integration = detect
 shell-integration-features = ssh-env,ssh-terminfo
 
 macos-titlebar-style = transparent
+
+# Pi: Alt+Backspace → ESC DEL (word-delete), 穿透 tmux 键位截获。
+keybind = alt+backspace=text:\x1b\x7f

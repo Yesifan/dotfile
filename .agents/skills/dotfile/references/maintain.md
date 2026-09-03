@@ -14,7 +14,7 @@ dgit add ~/.zprofile
 dgit add ~/.zshrc
 dgit add ~/.config/shell/main.zsh
 dgit add ~/.config/git/config
-dgit add ~/.config/ghostty/config.ghostty
+dgit add ~/.config/ghostty/config
 dgit add ~/.config/starship.toml
 dgit add ~/.vimrc
 dgit add ~/.tmux.conf

@@ -6,16 +6,16 @@
 
 ## 配置文件一览
 
-| 软件      | 配置文件                           |
-| --------- | ---------------------------------- |
+| 软件      | 配置文件                                                   |
+| --------- | ---------------------------------------------------------- |
 | Zsh       | `~/.zshenv`, `~/.zprofile`, `~/.zshrc`, `~/.config/shell/` |
-| Git       | `~/.config/git/config`             |
-| Vim       | `~/.vimrc`                         |
-| Starship  | `~/.config/starship.toml`          |
-| tmux      | `~/.tmux.conf`                     |
-| Ghostty   | `~/.config/ghostty/config.ghostty` |
-| Codex CLI | `~/.codex/*`                       |
-| OpenCode  | `~/.config/opencode/*`             |
+| Git       | `~/.config/git/config`                                     |
+| Vim       | `~/.vimrc`                                                 |
+| Starship  | `~/.config/starship.toml`                                  |
+| tmux      | `~/.tmux.conf`                                             |
+| Ghostty   | `~/.config/ghostty/config`                                 |
+| Codex CLI | `~/.codex/*`                                               |
+| OpenCode  | `~/.config/opencode/*`                                     |
 
 用 LOCAL 块标记任意追踪文件里的机器本地内容：
 
@@ -33,7 +33,7 @@ LOCAL 块内是机器本地内容（pull/rebase 时保留、推送前剥离）�
 安装或更新 dotfile 之前，先把 **`dotfile` skill** 同步到最新，让 agent 拿到最新的指导：
 
 ```zsh
-npx skills add Yesifan/dotfile
+npx skills use YeSifan/dotfile@dotfile
 ```
 
 分步操作在仓库自带的 **`dotfile` skill**（`.agents/skills/dotfile/`）：

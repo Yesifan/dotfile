@@ -6,17 +6,17 @@ The repo owns all the shared config. Each machine's secrets, paths, and personal
 
 ## Configuration overview
 
-| Software  | Config File                        |
-| --------- | ---------------------------------- |
+| Software  | Config File                                                |
+| --------- | ---------------------------------------------------------- |
 | Zsh       | `~/.zshenv`, `~/.zprofile`, `~/.zshrc`, `~/.config/shell/` |
-| Git       | `~/.config/git/config`             |
-| Vim       | `~/.vimrc`                         |
-| Starship  | `~/.config/starship.toml`          |
-| tmux      | `~/.tmux.conf`                     |
-| Ghostty   | `~/.config/ghostty/config.ghostty` |
-| Codex CLI | `~/.codex/*`                       |
-| OpenCode  | `~/.config/opencode/*`             |
-| Pi        | `~/.pi/agent/*`                    |
+| Git       | `~/.config/git/config`                                     |
+| Vim       | `~/.vimrc`                                                 |
+| Starship  | `~/.config/starship.toml`                                  |
+| tmux      | `~/.tmux.conf`                                             |
+| Ghostty   | `~/.config/ghostty/config`                                 |
+| Codex CLI | `~/.codex/*`                                               |
+| OpenCode  | `~/.config/opencode/*`                                     |
+| Pi        | `~/.pi/agent/*`                                            |
 
 LOCAL blocks mark machine-local content in any tracked file:
 
@@ -36,7 +36,7 @@ Pi's `~/.pi/agent/settings.json` cannot carry a LOCAL block (it is strict JSON a
 Before you install or update the dotfiles, sync the **`dotfile` skill** to the latest first, so the agent has the most current guidance:
 
 ```zsh
-npx skills add Yesifan/dotfile
+npx skills use YeSifan/dotfile@dotfile
 ```
 
 The step-by-step procedures live in the bundled **`dotfile` skill** at `.agents/skills/dotfile/`:

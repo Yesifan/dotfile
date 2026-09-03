@@ -45,7 +45,7 @@ When you are unsure what is tracked or how a file is split, start with [referenc
 | Make, review, commit, and safely push a change | [references/maintain.md](references/maintain.md) |
 | Update an existing machine (incl. breaking changes) | [references/update.md](references/update.md) |
 | Tracked vs untracked files, markers, conflict rules, LOCAL convention | [references/conventions.md](references/conventions.md) |
-| Per-commit migration plans for breaking updates | [references/migrations.md](references/migrations.md) |
+| Per-commit migration plans for breaking updates | [references/migrations/readme.md](references/migrations/readme.md) |
 | Agent-side setup: env vars, MCP servers, skills tooling | [references/agents.md](references/agents.md) |
 
 > All tables above are the **production / machine path** (`dgit` on `$HOME/.cfg`). Editing the **source repo** (a normal clone like `/home/ye/code/dotfile`) is plain `git` and is *not* in these references.

@@ -12,7 +12,7 @@ dgit log --oneline --graph -5
 dgit log -1 --format=%s             # what is at HEAD, and is it a breaking commit?
 ```
 
-The last command matters: if HEAD matches a hash listed in the **breaking updates** section of [migrations.md](migrations.md), follow that plan before reloading the shell.
+The last command matters: if HEAD matches a hash listed in [migrations/readme.md](migrations/readme.md), follow that plan before reloading the shell.
 
 ## Case A — clean main, no local commit
 
@@ -33,7 +33,7 @@ After pulling:
   ```
 
 - The tracked `~/.vimrc` is the Vim entrypoint; no symlink is required.
-- If the update is breaking, run the migration plan from [migrations.md](migrations.md) first.
+- If the update is breaking, run the migration plan from [migrations/readme.md](migrations/readme.md) first.
 - Reload and verify: `exec zsh -l`, then `dgit status --short` should be clean.
 
 ## Case B — machine has a LOCAL commit

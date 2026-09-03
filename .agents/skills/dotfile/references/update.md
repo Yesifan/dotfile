@@ -4,7 +4,7 @@
 
 Bring a machine already running these dotfiles up to date. Before you start, sync this skill to the latest so you have the most current update/migration steps: `npx skills use YeSifan/dotfile@dotfile`.
 
-The path depends on whether the machine has a LOCAL commit, and whether the incoming change is breaking.
+The path depends on whether the machine has a LOCAL commit, whether the work-tree is dirty, and whether the incoming change is breaking.
 
 ## First: inspect the state
 
@@ -15,6 +15,14 @@ dgit log -1 --format=%s             # what is at HEAD, and is it a breaking comm
 ```
 
 The last command matters: if HEAD matches a hash listed in [migrations/readme.md](migrations/readme.md), follow that plan before reloading the shell.
+
+Then pick the path:
+
+| Machine state | Path |
+|---------------|------|
+| Clean main, nothing modified, not ahead | Case A — `dgit pull --rebase origin main` |
+| Only a `LOCAL:` commit ahead | Case B — `dgit rebase origin/main` |
+| `LOCAL:` commit **plus dirty tracked files**, or a breaking commit rewrote the local section | Case C — back up, reset to `origin/main`, rewrap, new `LOCAL:` commit |
 
 ## Case A — clean main, no local commit
 
@@ -60,6 +68,46 @@ Always re-verify the invariant:
 ```zsh
 dgit log --oneline --graph -3        # local exactly 1 ahead of origin/main
 ```
+
+## Case C — dirty work-tree, or a breaking commit rewrote your local content
+
+When the machine has **uncommitted tracked changes** (often a machine-local edit to a tracked file) plus a LOCAL commit, `dgit rebase origin/main` fails because the work-tree is dirty. And if the incoming commit **rewrites or removes** the exact section your machine-local content sits in (e.g. the old `REMOTE CONFIG` split), a rebase can't carry it — the local edits get stranded. Don't fight the rebase; reset-and-rewrap:
+
+1. **Inventory** what diverges from origin, and label each file **shared** (belongs in the repo) or **machine-local** (goes in a LOCAL block / LOCAL REPLACE):
+
+   ```zsh
+   dgit log --oneline origin/main..main        # your LOCAL commit(s)
+   dgit diff --name-only origin/main           # tracked files diverging from origin
+   dgit status --short                         # uncommitted tracked changes
+   ```
+
+2. **Back up** the full machine-local content (unique filenames — conventions → Backups):
+
+   ```zsh
+   mkdir -p /tmp/dotfile-migrate
+   cp ~/.zshrc                  /tmp/dotfile-migrate/zshrc.entrypoint
+   cp ~/.zprofile               /tmp/dotfile-migrate/zprofile.login
+   cp ~/.config/shell/main.zsh  /tmp/dotfile-migrate/shell.main
+   cp ~/.codex/config.toml      /tmp/dotfile-migrate/codex.config
+   cp ~/.config/opencode/opencode.jsonc /tmp/dotfile-migrate/opencode.jsonc
+   ```
+
+3. **Rebuild to the new origin** (this discards the old LOCAL commit and the machine-local edits — they're safely in `/tmp`):
+
+   ```zsh
+   dgit fetch origin
+   dgit reset --hard origin/main
+   ```
+
+4. **Rewrap** the local content from the backup into the new files — a `===== LOCAL =====` block for additions, an inline `LOCAL REPLACE:` for keys you must override (conventions → LOCAL REPLACE).
+
+5. **Commit one LOCAL commit** and re-check the invariant:
+
+   ```zsh
+   dgit add <tracked files you touched>
+   dgit commit -m "LOCAL: <summary> [never push]"
+   dgit log --oneline --graph -3        # exactly 1 ahead of origin/main
+   ```
 
 ## If the pull/rebase conflicts on a tracked file
 

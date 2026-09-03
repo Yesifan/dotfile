@@ -41,11 +41,18 @@ When a future commit breaks existing behaviour, add a new `<full-hash>.md` file 
 
 **What breaks:**
 
-**Detect (any one applies):**
+**Detect (any one applies)** — prefer **structure over text**; a `grep` can miss a reworded / re-cased marker:
+- `grep -qiE '<marker>' <file>` (case-insensitive)
+- a path that exists only after the migration, e.g. `[ -e ~/.config/<new> ]`
+- `dgit ls-files --error-unmatch <old-path> 2>/dev/null`
 
-**Pre-flight:**
+**Pre-flight** — back up **every** source, each to a **unique** name (see conventions → Backups).
 
 **Migration:**
+- If the change **rewrites/removes** the section your machine-local content sits in, or the work-tree is dirty, don't rebase — use [update.md](../update.md) Case C (back up → reset to `origin/main` → rewrap → new `LOCAL:` commit).
 
 **Verify:**
+- `zsh -n <zsh-file>` for any zsh file touched
+- `python3 -c "import tomllib;tomllib.load(open('<toml>','rb'))"` for TOML
+- `node -e "const fs=require('fs'),{parse}=require('jsonc-parser');parse(fs.readFileSync('<jsonc>','utf8'),{allowTrailingComma:true})"` for JSONC
 ```

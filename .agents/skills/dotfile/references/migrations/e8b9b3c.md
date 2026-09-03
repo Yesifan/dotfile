@@ -19,7 +19,7 @@
 
 **Detect (any one applies):**
 
-- `grep -q 'REMOTE CONFIG' ~/.zshrc` returns 0
+- `grep -qiE 'remote config' ~/.zshrc` returns 0 (case-insensitive — machines wrote `# =========REMOTE CONFIG============` or lowercase `remote config`)
 - `[ -e ~/.config/zsh/zshrc ]` is true
 - `dgit ls-files --error-unmatch .config/zsh/zshrc 2>/dev/null` succeeds
 
@@ -43,7 +43,7 @@
    dgit pull --rebase origin main
    ```
 
-   If this conflicts on `~/.zshrc`, resolve it by keeping the new remote `~/.zshrc` (the entrypoint that sources `~/.config/shell/*.zsh`) and dropping the old `REMOTE CONFIG` marker lines — the machine-local content is recovered in step 3.
+   If this conflicts on `~/.zshrc`, resolve it by keeping the new remote `~/.zshrc` (the entrypoint that sources `~/.config/shell/*.zsh`) and dropping the old `REMOTE CONFIG` marker lines (match case-insensitively — some machines wrote `remote config`) — the machine-local content is recovered in step 3.
 
 3. **Move machine-local content into a LOCAL block.**
 
@@ -72,6 +72,7 @@
    ```
 
    - `dgit status --short` — clean (no tracked file modified)
-   - `grep -q 'REMOTE CONFIG' ~/.zshrc` — should return non-zero (old marker gone)
+   - `grep -qiE 'remote config' ~/.zshrc` — should return non-zero (old marker gone)
+   - `zsh -n ~/.zshrc ~/.zprofile ~/.config/shell/main.zsh` — parses clean
    - `command -v zoxide fzf starship` — tools resolve
    - `~/.zshrc` contains a `# ===== LOCAL =====` block with the machine's content

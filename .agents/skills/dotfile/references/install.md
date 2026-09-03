@@ -19,6 +19,7 @@ git clone --bare git@github.com:Yesifan/dotfile.git "$HOME/.cfg"
 alias dgit='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 dgit checkout -f
 dgit config --local status.showUntrackedFiles no
+dgit fetch origin main:refs/remotes/origin/main
 ```
 
 Notes:
@@ -26,6 +27,7 @@ Notes:
 - `.cfg` is added to `~/.gitignore` so the bare repo isn't treated as an untracked file in the user's own git repos.
 - `dgit checkout -f` checks the tracked files out into `$HOME`. It is `-f` because the work-tree already contains real user files; warning about them is noise, not a reason to stop.
 - `status.showUntrackedFiles no` keeps `dgit status` from listing the machine's untracked files (which by design are many).
+- A bare clone may only have `FETCH_HEAD`, not a remote-tracking `origin/main`; the update/migration scripts reference `origin/main`, so the `fetch ... refs/remotes/origin/main` line above establishes it once.
 
 ## 2. Load the shell
 

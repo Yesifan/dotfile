@@ -25,6 +25,8 @@ LOCAL blocks mark machine-local content in any tracked file:
 
 Content inside a LOCAL block is machine-local (preserved on pull/rebase, stripped before push); everything else is repo-managed (remote wins on conflict).
 
+To override or remove a value the repo already ships (e.g. `model`, `lsp`), use an inline `LOCAL REPLACE: <key>` marker instead of appending an empty block. Both marker kinds are preserved on pull and stripped before push — see `.agents/skills/dotfile/references/conventions.md`.
+
 Pi's `~/.pi/agent/settings.json` cannot carry a LOCAL block (it is strict JSON and Pi warns-and-ignores any comment), so the repo only tracks Pi's **shared resources** — `~/.pi/agent/AGENTS.md` (a symlink to `.codex/AGENTS.md`), `~/.pi/agent/prompts/`, and the shared permission policy. Its `settings.json` is dominated by machine-local provider/model/package config and stays on the machine, like `.gitconfig` and `.zprofile`.
 
 ## Tools

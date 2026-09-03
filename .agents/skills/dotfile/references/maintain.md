@@ -33,7 +33,7 @@ dgit add ~/README.md
 ## 2. Review before committing
 
 ```zsh
-dgit status --short --untracked-files=all
+dgit status --short
 dgit diff --cached
 dgit diff --cached --name-only
 ```
@@ -67,8 +67,15 @@ git --git-dir=/tmp/dotfile-merge/dotfile.git \
 Copy the managed content out of the machine's files, dropping every LOCAL block:
 
 ```sh
-# Remove a LOCAL block (both markers and everything between).
-strip_local() { awk '/===== LOCAL =====/{s=1} !s{print} /===== END LOCAL =====/{s=0}' "$1"; }
+# Remove any LOCAL marker: a `===== LOCAL =====` block (append) or a
+# `LOCAL REPLACE: <key>` block (replace/delete). Marker lines and body are both dropped.
+strip_local() {
+  awk '
+    /===== LOCAL =====/ || /LOCAL REPLACE:/ { s=1 }
+    !s { print }
+    /===== END LOCAL =====/ || /END LOCAL REPLACE/ { s=0 }
+  ' "$1"
+}
 
 strip_local ~/.zshrc                            > /tmp/dotfile-merge/worktree/.zshrc
 strip_local ~/.zprofile                         > /tmp/dotfile-merge/worktree/.zprofile
@@ -76,13 +83,14 @@ strip_local ~/.codex/config.toml                > /tmp/dotfile-merge/worktree/.c
 strip_local ~/.config/opencode/opencode.jsonc   > /tmp/dotfile-merge/worktree/.config/opencode/opencode.jsonc
 ```
 
-(The match is on `===== LOCAL =====` / `===== END LOCAL =====` anywhere in a line, so it works regardless of the comment char — `#` for zsh/toml, `//` for opencode.)
+(The match is on the marker text anywhere in a line, so it works for both comment chars — `#` for zsh/toml, `//` for opencode — and for both append and REPLACE markers.)
 
 Verify the extracted files are still valid before committing:
 
 ```zsh
-python3 -c "import toml; toml.load(open('/tmp/dotfile-merge/worktree/.codex/config.toml'))" 2>&1
-python3 -c "import json; json.load(open('/tmp/dotfile-merge/worktree/.config/opencode/opencode.jsonc'))" 2>&1
+zsh -n /tmp/dotfile-merge/worktree/.zshrc /tmp/dotfile-merge/worktree/.zprofile 2>&1
+python3 -c "import tomllib;tomllib.load(open('/tmp/dotfile-merge/worktree/.codex/config.toml','rb'))" 2>&1
+node -e "const fs=require('fs'),{parse}=require('jsonc-parser');parse(fs.readFileSync('/tmp/dotfile-merge/worktree/.config/opencode/opencode.jsonc','utf8'),{allowTrailingComma:true})" 2>&1
 ```
 
 > JSON and TOML cut with `sed` can end on a dangling comma or a missing closing `}` / `]`. Fix those by hand before you commit — a broken `config.toml` or `opencode.jsonc` will crash the agent on every load.

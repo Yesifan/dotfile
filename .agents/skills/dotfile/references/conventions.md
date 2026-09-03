@@ -47,6 +47,37 @@ Pi's tracked files are its shared resources only (`~/.pi/agent/AGENTS.md` — a 
 
 > Don't confuse the two "LOCAL" things: a **LOCAL block** is a marker inside a tracked file (machine content). The **LOCAL commit** below is a git topology convention (machine `main` stays one ahead). They're related but separate.
 
+## LOCAL REPLACE and inline markers
+
+A `===== LOCAL =====` block **appends/preserves** content the repo doesn't already ship (PATH, aliases, a new tool). Some config instead needs to **change or drop a value the repo ships** — e.g. `model` in `.codex/config.toml`, `model`/`small_model`/`lsp` in `opencode.jsonc`, or removing `[features.network_proxy]`. Appending an empty block can't express that. Use a **LOCAL REPLACE** marker, in place, wrapping the repo's key:
+
+```toml
+# .codex/config.toml (# comment char)
+model = "gpt-5.6-luna"
+# LOCAL REPLACE: model
+# shared: gpt-5.6-luna
+model = "gpt-5.6-luna-local"        # machine override
+# END LOCAL REPLACE
+```
+
+```jsonc
+// .config/opencode/opencode.jsonc (// comment char)
+// LOCAL REPLACE: model
+// shared: opencode-go/deepseek-v4-flash
+"model": "deepseek-v4-flash",
+// END LOCAL REPLACE
+```
+
+Rules:
+- `LOCAL REPLACE: <key>` … `END LOCAL REPLACE`: the value(s) between replace what the repo ships for `<key>`. An empty body **deletes** the key.
+- Keep a `shared: <original value>` comment (the file's comment char) under the open marker, so a rebase/merge can reconcile against what the repo originally had.
+- Use the **file's comment char** (`#` for zsh/toml, `//` for jsonc). A `#` in JSONC would break the file.
+- **`LOCAL block` = append/preserve; `LOCAL REPLACE` = replace/delete.** Both are stripped before a push (see maintain.md).
+
+A marker does not have to sit at the end of the file — it can be **interleaved inline** with shared content. That's the only way to touch a value inside a shared TOML table: a `[table]` header can't be reopened once closed, so an override under `[features.network_proxy]` or `[permissions.dev.filesystem]` goes in a small inline `LOCAL REPLACE:` inside that table, not in a footer block.
+
+JSONC note: it allows a trailing comma and `//` is valid inside a string, so a naive `json.load` or a hand-cut edit can leave a dangling comma or a missing `}`. Validate with a JSONC-aware parser (`allowTrailingComma: true`) before committing.
+
 ## The LOCAL commit convention
 
 Every machine keeps its local `main` exactly **one commit ahead** of `origin/main`. That single commit contains all machine-local additions and is titled:
@@ -79,14 +110,20 @@ dgit log --oneline --graph -3
 
 Never push the LOCAL commit. To confirm you're not about to, check `dgit status --short` is clean of tracked changes and that only `LOCAL:` is ahead.
 
+## Backups
+
+Name each backup source with a **unique, independent** filename — never reuse one target for two sources, or a second `cp` silently overwrites the first (and can destroy machine secrets). Name by source (`<file>.entrypoint`, `<file>.login`, `<file>.shell`) and give each migration its own `/tmp/dotfile-migrate` dir.
+
 ## Review before committing
 
 Always look before you commit:
 
 ```zsh
-dgit status --short --untracked-files=all
+dgit status --short
 dgit diff --cached
 dgit diff --cached --name-only
 ```
+
+Never pass `--untracked-files=all` across `$HOME` — the work-tree is the whole home, so it scans tens of thousands of machine files. `status.showUntrackedFiles no` already keeps them out, so plain `--short` is enough.
 
 Ask yourself: does the staged diff contain only managed content? Any local block, secret, or machine path is a blocker.

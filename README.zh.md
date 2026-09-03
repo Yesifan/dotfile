@@ -24,6 +24,8 @@
 
 LOCAL 块内是机器本地内容（pull/rebase 时保留、推送前剥离）；块外是仓库管理区（冲突时以远程为准）。
 
+若要覆盖/删除仓库已发货的值（如 `model`、`lsp`），用行内 `LOCAL REPLACE: <key>` 标记，而不是加一个空块。两类标记 pull 时都保留、push 前都剥离 — 详见 `.agents/skills/dotfile/references/conventions.md`。
+
 ## 依赖工具
 
 `zsh`、`starship`、`zoxide`、`fzf`、`zsh-autosuggestions`、`zsh-syntax-highlighting`、`tmux`、`git-delta`、`ripgrep`、`fd`、`jq`、Vim、Ghostty。每个可选工具块都用 `command -v` 守卫，新机器可先加载 shell 再安装工具。

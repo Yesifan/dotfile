@@ -2,7 +2,9 @@
 
 > **Scope:** this reference is for the **production / machine path** (`dgit`, bare repo at `$HOME/.cfg`, work-tree `$HOME`). If you are in the dotfiles **source repo** (a normal clone), update with plain `git pull --rebase origin main` instead.
 
-Bring a machine already running these dotfiles up to date. The path depends on whether the machine has a LOCAL commit, and whether the incoming change is breaking.
+Bring a machine already running these dotfiles up to date. Before you start, sync this skill to the latest so you have the most current update/migration steps: `npx skills add Yesifan/dotfile`.
+
+The path depends on whether the machine has a LOCAL commit, and whether the incoming change is breaking.
 
 ## First: inspect the state
 

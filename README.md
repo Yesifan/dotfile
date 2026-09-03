@@ -30,6 +30,12 @@ Content inside a LOCAL block is machine-local (preserved on pull/rebase, strippe
 
 ## Install, maintain, update
 
+Before you install or update the dotfiles, sync the **`dotfile` skill** to the latest first, so the agent has the most current guidance:
+
+```zsh
+npx skills add Yesifan/dotfile
+```
+
 The step-by-step procedures live in the bundled **`dotfile` skill** at `.agents/skills/dotfile/`:
 
 - **Install** on a new machine — `.agents/skills/dotfile/references/install.md`

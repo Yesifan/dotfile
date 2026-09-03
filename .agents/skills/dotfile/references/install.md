@@ -2,7 +2,9 @@
 
 > **Scope:** this reference is for the **production / machine path** (deploying the dotfiles onto an installed machine via bare repo `$HOME/.cfg` and `dgit`). It is not about the dotfiles source repo — installing a source checkout is just `git clone` + `git checkout`.
 
-Set up the dotfiles from scratch. Two things to keep in mind: the shell must be loadable before the tools are installed (every optional block is guarded by `command -v`), and the clone is a **bare** repo whose work-tree is `$HOME`.
+Set up the dotfiles from scratch. Before you start, sync this skill to the latest so you have the most current install steps: `npx skills add Yesifan/dotfile`.
+
+Two things to keep in mind: the shell must be loadable before the tools are installed (every optional block is guarded by `command -v`), and the clone is a **bare** repo whose work-tree is `$HOME`.
 
 ## 0. Prerequisites
 

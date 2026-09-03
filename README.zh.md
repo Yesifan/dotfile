@@ -30,6 +30,12 @@ LOCAL 块内是机器本地内容（pull/rebase 时保留、推送前剥离）�
 
 ## 安装 / 维护 / 更新
 
+安装或更新 dotfile 之前，先把 **`dotfile` skill** 同步到最新，让 agent 拿到最新的指导：
+
+```zsh
+npx skills add Yesifan/dotfile
+```
+
 分步操作在仓库自带的 **`dotfile` skill**（`.agents/skills/dotfile/`）：
 
 - **新机器安装** — `.agents/skills/dotfile/references/install.md`

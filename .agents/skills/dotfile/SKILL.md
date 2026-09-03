@@ -13,6 +13,8 @@ The whole system is built around one idea: **the repo owns all the shared config
 
 You are here to walk through the install, maintenance, and update flows. Read the reference for the task before acting, and lean on the rules below so you never leak local config into the repo or clobber a machine's local setup.
 
+> **Before installing or updating on a machine, sync this skill to the latest so the agent has current guidance:** `npx skills add Yesifan/dotfile`.
+
 ## Two places this skill applies — pick the right commands
 
 There are two very different places you can be when "working on the dotfiles", and **the commands differ**. Read this first so you don't run `dgit` where you should run `git`, or vice-versa.

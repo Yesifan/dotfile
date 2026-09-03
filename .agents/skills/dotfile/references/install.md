@@ -35,46 +35,20 @@ Or open a new terminal. Missing tools won't cause errors because the config guar
 
 ## 3. Install dependencies
 
-Install the tool chain for the platform. Only install what the user actually wants; the shell works without them.
-
-**macOS:**
-
-```zsh
-brew install starship zoxide fzf zsh-autosuggestions zsh-syntax-highlighting tmux git-delta ripgrep fd jq
-```
-
-**Debian / Ubuntu:**
+Install the tool chain for the platform. Only install what you actually want; the shell works without them. Example for Debian / Ubuntu:
 
 ```zsh
 sudo apt update
 sudo apt install zsh fzf tmux zsh-autosuggestions zsh-syntax-highlighting git-delta vim ripgrep fd-find jq
 ```
 
+On other platforms use your package manager (`macOS`/`Linuxbrew`: `brew`, Fedora: `dnf`, Arch: `pacman`) to install the same tool set; `starship`, `zoxide`, and `git-delta` come from their official releases if a distro package is missing.
+
 Debian/Ubuntu package `fd` as `fd-find`, and the command may be `fdfind`. If needed, make a `fd` shim:
 
 ```zsh
 mkdir -p "$HOME/.local/bin"
 ln -sf "$(command -v fdfind)" "$HOME/.local/bin/fd"
-```
-
-`starship`, `zoxide`, and `git-delta` come from their official releases if a distro package is missing.
-
-**Fedora:**
-
-```zsh
-sudo dnf install zsh starship zoxide fzf tmux zsh-autosuggestions zsh-syntax-highlighting git-delta vim ripgrep fd-find jq
-```
-
-**Arch Linux:**
-
-```zsh
-sudo pacman -S zsh starship zoxide fzf tmux zsh-autosuggestions zsh-syntax-highlighting git-delta vim ripgrep fd jq
-```
-
-**Linuxbrew:**
-
-```zsh
-brew install starship zoxide fzf zsh-autosuggestions zsh-syntax-highlighting tmux git-delta ripgrep fd jq
 ```
 
 ## 4. Set up environment variables

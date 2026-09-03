@@ -16,43 +16,7 @@ The alias is defined in `~/.config/zsh/zshrc`, so it is available in an interact
 
 ## Which files are tracked
 
-Only explicitly added files ever become part of the repo. This is enforced by habit, not by an ignore rule — the repo's `.gitignore` only ignores `.cfg` itself.
-
-**Tracked** (managed by dgit):
-
-```
-~/.zshrc                          # only the part inside the remote marker block
-~/.config/zsh/zshrc
-~/.config/git/config
-~/.config/ghostty/config.ghostty
-~/.config/starship.toml
-~/.vimrc
-~/.tmux.conf
-~/.codex/AGENTS.md
-~/.codex/config.toml              # only content above the local-only marker
-~/.codex/agents/reviewer.toml
-~/.codex/agents/waiter.toml
-~/.codex/rules/development.rules
-~/.agents/.skill-lock.json
-~/.config/opencode/opencode.jsonc # only content above the local config marker
-~/.config/opencode/AGENTS.md
-~/.config/opencode/tui.json
-~/README.md
-~/README.zh.md
-```
-
-**Untracked, machine-local** (never commit):
-
-```
-~/.zprofile                        # brew shellenv, login init
-~/.ssh/config                      # machine-specific SSH hosts/proxy
-~/.npmrc                           # npm registry, auth tokens
-~/.gitconfig                       # personal git identity
-~/.zshrc content below the remote end marker
-~/.codex/config.toml content below the local-only marker
-~/.config/opencode/opencode.jsonc content below the local config marker
-*.pem, *.key, .proxyenv            # secrets — never enter the repo
-```
+The repo only ever holds **explicitly added** files — never `dgit add -u`, `.`, or `-a`. To see what's tracked, run `dgit ls-files`; the machine-local vs managed split is the marker rule below. Since the bare repo's work-tree is `$HOME`, everything under `$HOME` is either a tracked file or an untracked machine file.
 
 ## Marker files
 

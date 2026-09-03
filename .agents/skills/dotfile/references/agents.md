@@ -1,55 +1,41 @@
-# Agent Configuration
+# Agent-side setup
 
-## MCP Servers
+The codebase uses AI coding agents (Codex, OpenCode, pi) with shared skills and a couple of MCP servers. This is the machine-local setup that lives outside the repo (env vars, API keys) plus the tooling used to install skills.
 
----
+## Environment variables
+
+Add only the variables you use, **below** the local marker in `~/.zshrc` (or wherever the machine keeps such settings). Values are machine-local secrets — never commit them.
+
+| Variable | Needed when | Purpose |
+|----------|-------------|---------|
+| `CONTEXT7_API_KEY` | Using Context7 MCP | Context7 API access |
+| `EXA_API_KEY` | Using the Exa MCP | Exa web search API access |
+
+`EXA_API_KEY` is read directly by the Exa MCP. `OPENCODE_ENABLE_EXA` is no longer needed.
+
+## MCP servers
 
 ### Context7
 
-从 [context7.com/dashboard](https://context7.com/dashboard) 创建 API Key。
-
-设置环境变量：
-
-```bash
-export CONTEXT7_API_KEY="ctx7_..."
-```
-
-或者在终端直接登录：
+Create an API key at [context7.com/dashboard](https://context7.com/dashboard). Set `CONTEXT7_API_KEY`, or log in from the terminal:
 
 ```bash
 npx ctx7 setup --opencode
 ```
 
-选择 `MCP` 模式，按提示完成 OAuth 登录。
+Choose `MCP` mode and complete the OAuth login.
 
----
+### Web Search (OpenCode only)
 
-### Web Search（仅 OpenCode）
-
-OpenCode 内置 `websearch` 使用 Exa 服务。
-
-- 使用 OpenCode Provider（模型名含 `opencode-` 前缀）时：**不需要** 额外设置
-- 使用其他 Provider（直接调用 Anthropic / OpenAI API）时：需要设置
-
-```bash
-export OPENCODE_ENABLE_EXA=1
-```
-
-无需单独注册或 API Key。
-
----
+OpenCode's built-in `websearch` uses Exa. With an OpenCode provider (model name containing `opencode-`): no extra setup. With any other provider (direct Anthropic/OpenAI API): set `EXA_API_KEY`.
 
 ### Playwright
 
-Playwright MCP 无需 API Key 或 Token，`npx @playwright/mcp@latest` 自动处理依赖。
+No API key needed; `npx @playwright/mcp@latest` handles dependencies. First run downloads browser binaries (~30s).
 
-首次运行会自动下载浏览器二进制文件，耗时约 30 秒。
+## Skills tooling
 
----
-
-## Skills
-
-### Installation
+Skills are managed with `pnpm dlx skills`. Global skills live in `~/.agents/skills/` and work with Codex, OpenCode, Warp, Zed, and GitHub Copilot.
 
 ```bash
 pnpm dlx skills add <package> -g     # install global
@@ -60,9 +46,7 @@ pnpm dlx skills ls -g                # list global skills
 pnpm dlx skills ls                   # list project skills
 ```
 
-### Installed Skills
-
-All skills live in `~/.agents/skills/` and work with Codex, OpenCode, Warp, Zed, and GitHub Copilot.
+### Installed global skills
 
 | Skill | Purpose | Trigger |
 |-------|---------|---------|
@@ -87,3 +71,5 @@ All skills live in `~/.agents/skills/` and work with Codex, OpenCode, Warp, Zed,
 | to-prd | Synthesize conversation into PRD, publish to tracker | Say "write a PRD" |
 | triage | Move issues and PRs through a triage state machine | Say "triage" |
 | writing-great-skills | Reference for writing and editing skills | When creating/editing skills |
+
+The project's own `dotfile` skill is bundled here in the repo under `.agents/skills/dotfile/`; it is intentionally not in the global list and not auto-triggered.

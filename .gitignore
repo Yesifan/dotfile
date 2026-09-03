@@ -1,0 +1,5 @@
+# dotfiles bare repo (checked into $HOME on machines; keep .cfg ignored)
+.cfg
+
+# Skill test workspace (results/evals/iterations — not part of the dotfiles)
+_dotfile-skill-workspace/

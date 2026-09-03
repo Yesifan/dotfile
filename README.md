@@ -1,8 +1,10 @@
 # Dotfiles
 
-Managed with a bare Git repository at `$HOME/.cfg`. Works on macOS and Linux.
+Managed with a bare Git repository at `$HOME/.cfg`, aliased as `dgit`. Works on macOS and Linux.
 
-## Configuration Overview
+The repo holds only shared config. Each machine's secrets, paths, and personal settings stay out of it and are never committed. A few files are split by markers into a repo-managed section (above the marker) and a machine-local section (below) that must never be pushed.
+
+## Configuration overview
 
 | Software  | Config File                        |
 | --------- | ---------------------------------- |
@@ -15,203 +17,29 @@ Managed with a bare Git repository at `$HOME/.cfg`. Works on macOS and Linux.
 | Codex CLI | `~/.codex/*`                       |
 | OpenCode  | `~/.config/opencode/*`             |
 
-`~/.zshrc` uses a ` =========remote config============ ` / ` =========remote end============== ` marker pair.
-`.codex/config.toml` uses `# ---- Local-only additions below ----`.
-`.config/opencode/opencode.jsonc` uses `// ======= local config ===` / `// ======= local config end ===`.
-Content above the marker is repo-managed; content below is machine-local (never push).
-Shared shell behavior lives in `~/.config/zsh/zshrc`. All optional tool initialization
-is guarded by `command -v` so a fresh machine can load the shell before tools
-are installed.
+Markers that split managed from local content:
 
-See [shell.md](instructions/dotfile/shell.md) for shell behavior and
-[config.md](instructions/dotfile/config.md) for tool configuration details.
+- `.zshrc` — `# =========remote config============` … `# =========remote end==============`
+- `.codex/config.toml` — `# ---- Local-only additions below ----`
+- `.config/opencode/opencode.jsonc` — `// ======= local config ===` … `// ======= local config end ===`
+
+Content above a marker is repo-managed (remote wins on conflict); content below is machine-local (preserved, never committed).
 
 ## Tools
 
-The interactive shell setup uses:
+`zsh`, `starship`, `zoxide`, `fzf`, `zsh-autosuggestions`, `zsh-syntax-highlighting`, `tmux`, `git-delta`, `ripgrep`, `fd`, `jq`, Vim, and Ghostty. Every optional tool block is guarded by `command -v`, so a fresh machine loads the shell before tools are installed.
 
-- `zsh` as the shell
-- `starship` for the prompt
-- `zoxide` for directory jumping
-- `fzf` for fuzzy search and shell key bindings
-- `zsh-autosuggestions` for gray inline history suggestions
-- `zsh-syntax-highlighting` for realtime command-line highlighting
-- `tmux` for terminal multiplexing
-- `git-delta` for readable `git diff` and `git show`
-- `ripgrep` (`rg`) for fast recursive text search
-- `fd` for fast file and directory search
-- `jq` for JSON parsing and querying
-- Vim with tracked config at `~/.vimrc`
-- Ghostty with a shared XDG config at `~/.config/ghostty/config.ghostty`
+## Install, maintain, update
 
-## Install
+The step-by-step procedures live in the bundled **`dotfile` skill** at `.agents/skills/dotfile/`:
 
-### Prerequisites
+- **Install** on a new machine — `.agents/skills/dotfile/references/install.md`
+- **Make, review, commit, push** a change — `.agents/skills/dotfile/references/maintain.md`
+- **Update an existing machine** (incl. breaking changes) — `.agents/skills/dotfile/references/update.md`
+- **Tracked vs untracked files, markers, conflict rules, LOCAL convention** — `.agents/skills/dotfile/references/conventions.md`
 
-- git (macOS: `xcode-select --install`, Linux: usually pre-installed)
-- SSH key added to GitHub
+The skill is intentionally **not auto-triggered** (`disable-model-invocation: true`). Load it explicitly via the skill command (`/skill:dotfile`) or by asking an agent to use the dotfile skill.
 
-### 1. Clone the config
+## Agent setup
 
-```zsh
-echo ".cfg" >> "$HOME/.gitignore"
-git clone --bare git@github.com:Yesifan/dotfile.git "$HOME/.cfg"
-alias dgit='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
-dgit checkout -f
-dgit config --local status.showUntrackedFiles no
-```
-
-### 2. Load the shell
-
-```zsh
-exec zsh -l
-```
-
-Or open a new terminal. Missing tools won't cause errors.
-
-### 3. Install dependencies
-
-#### macOS
-
-```zsh
-brew install starship zoxide fzf zsh-autosuggestions zsh-syntax-highlighting tmux git-delta ripgrep fd jq
-```
-
-#### Debian / Ubuntu
-
-```zsh
-sudo apt update
-sudo apt install zsh fzf tmux zsh-autosuggestions zsh-syntax-highlighting git-delta vim ripgrep fd-find jq
-```
-
-Install `starship`, `zoxide`, and `git-delta` from your package manager if
-available, or use their official release packages. Debian and Ubuntu package
-`fd` as `fd-find`, and the installed command may be named `fdfind`. Create a
-local `fd` shim if needed:
-
-```zsh
-mkdir -p "$HOME/.local/bin"
-ln -sf "$(command -v fdfind)" "$HOME/.local/bin/fd"
-```
-
-#### Fedora
-
-```zsh
-sudo dnf install zsh starship zoxide fzf tmux zsh-autosuggestions zsh-syntax-highlighting git-delta vim ripgrep fd-find jq
-```
-
-#### Arch Linux
-
-```zsh
-sudo pacman -S zsh starship zoxide fzf tmux zsh-autosuggestions zsh-syntax-highlighting git-delta vim ripgrep fd jq
-```
-
-#### Linuxbrew
-
-```zsh
-brew install starship zoxide fzf zsh-autosuggestions zsh-syntax-highlighting tmux git-delta ripgrep fd jq
-```
-
-### 4. Set up environment variables
-
-| Variable           | Required when      | Purpose                   |
-| ------------------ | ------------------ | ------------------------- |
-| `CONTEXT7_API_KEY` | Using Context7 MCP | Context7 API access       |
-| `EXA_API_KEY`      | Using the Exa MCP  | Exa web search API access |
-
-Add only the variables you use to `~/.zshrc` below the `# =========remote end==============` marker. The values are machine-local secrets and must not be committed. `EXA_API_KEY` is read directly by the Exa MCP; `OPENCODE_ENABLE_EXA` is no longer needed. See [agent.md](instructions/dotfile/agent.md) for setup details.
-
-### 5. Verify
-
-```zsh
-exec zsh -l
-```
-
-### 6. Install Agent Skills (optional)
-
-```zsh
-pnpm dlx skills add <package> -g
-pnpm dlx skills update -g
-```
-
-See [agent.md](instructions/dotfile/agent.md) for the full skill list.
-
-## File Management Principles
-
-### Tracked files (managed by dgit)
-
-Only explicitly added files — never use `dgit add -u`:
-
-```
-~/.zshrc                          # only content inside the remote config block
-~/.config/zsh/zshrc
-~/.config/git/config
-~/.config/ghostty/config.ghostty
-~/.config/starship.toml
-~/.vimrc
-~/.tmux.conf
-~/.codex/*                        # only content above `# ---- Local-only additions below ----`
-~/.agents/.skill-lock.json
-~/.config/opencode/*              # only content above `// ======= local config ===`
-instructions/dotfile/*
-```
-
-### Untracked files (local only)
-
-```
-~/.zprofile                        # brew shellenv, login init
-~/.ssh/config                      # machine-specific SSH hosts/proxy
-~/.npmrc                           # npm registry, auth tokens
-~/.gitconfig                       # personal git identity
-~/.zshrc content outside remote config block          # local PATH, aliases, env vars
-~/.codex/config.toml content below local-only marker  # project trusts, connectors, local TUI
-~/.config/opencode/* content below local config marker # local-only MCP servers
-*.pem, *.key, .proxyenv                               # secrets — never enter the repo
-```
-
-### Conflict Resolution
-
-| File / Section                                                      | Owner          | Strategy                                                 |
-| ------------------------------------------------------------------- | -------------- | -------------------------------------------------------- |
-| `.zshrc` — inside ` =========remote config============ ` block      | remote         | remote takes precedence (theirs)                         |
-| `.zshrc` — outside remote config block                              | local          | preserve local (ours), never commit                      |
-| `.codex/config.toml` — above `# ---- Local-only additions below ----` | remote       | remote takes precedence (theirs)                         |
-| `.codex/config.toml` — below that marker                            | local          | preserve local (ours), never commit                      |
-| `.config/opencode/opencode.jsonc` — above `// ======= local config ===` | remote      | remote takes precedence (theirs)                         |
-| `.config/opencode/opencode.jsonc` — below that marker               | local          | preserve local (ours), never commit                      |
-| `.zprofile`, `.ssh/config`, `.npmrc`, `.gitconfig`                  | local          | never in repo                                            |
-| `.agents/.skill-lock.json`                                          | remote + local | merge — local installs preserved alongside repo entries |
-
-### Local-Only Commits
-
-Local machines carry machine-specific config below the markers. To stay
-in sync with origin without pushing local data:
-
-1. Keep `main` exactly **1 commit ahead** of `origin/main`.
-2. That single commit contains **all** local additions, with message:
-   ```
-   LOCAL: <summary of all local configs> [never push]
-   ```
-3. After `dgit fetch origin`, replay your local commit on the new remote:
-
-   ```sh
-   # If exactly 1 commit ahead, fast-forward:
-   dgit rebase origin/main
-
-   # If diverged or rebase conflicts:
-   dgit reset --soft origin/main     # discard old LOCAL commit, keep changes staged
-   dgit commit --amend -m "LOCAL: <summary> [never push]"   # re-create single commit
-   ```
-
-   After rebase, `dgit log --oneline --graph -3` should show:
-   ```
-   * [hash] (HEAD -> main) LOCAL: ... [never push]
-   * [hash] (origin/main) ...
-   ```
-
-4. **Never push the LOCAL commit.**
-
-### Daily Operations
-
-See [migrate.md](instructions/dotfile/migrate.md) for committing changes,
-pushing, updating existing machines, and migration plans.
+Agent-side environment variables (`CONTEXT7_API_KEY`, `EXA_API_KEY`), MCP servers, and the skills tooling are in `.agents/skills/dotfile/references/agents.md`. Variables are machine-local; set them below the local marker and never commit them.

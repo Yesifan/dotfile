@@ -53,12 +53,12 @@ ln -sf "$(command -v fdfind)" "$HOME/.local/bin/fd"
 
 ## 4. Set up environment variables
 
-Only the variables the user needs belong here, and they go **below** the remote end marker in `~/.zshrc` (they are machine-local, never committed):
+Only the variables the user needs belong here, and they go **inside a LOCAL block in `~/.zshrc`** (machine-local, never committed):
 
-| Variable | Needed for | Purpose |
-|----------|------------|---------|
-| `CONTEXT7_API_KEY` | Context7 MCP | Context7 API access |
-| `EXA_API_KEY` | Exa MCP | Exa web search API access |
+| Variable           | Needed for   | Purpose                   |
+| ------------------ | ------------ | ------------------------- |
+| `CONTEXT7_API_KEY` | Context7 MCP | Context7 API access       |
+| `EXA_API_KEY`      | Exa MCP      | Exa web search API access |
 
 See [agents.md](agents.md) for the full agent-side setup.
 

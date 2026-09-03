@@ -9,8 +9,10 @@ Two distinct jobs get conflated here: **committing** a change (fast, local) and 
 Add tracked files explicitly. Never use `dgit add -u`, `dgit add .`, or `dgit commit -a` — the work-tree is `$HOME`, so a wide add would pull machine-local files into the repo.
 
 ```zsh
+dgit add ~/.zshenv
+dgit add ~/.zprofile
 dgit add ~/.zshrc
-dgit add ~/.config/zsh/zshrc
+dgit add ~/.config/shell/main.zsh
 dgit add ~/.config/git/config
 dgit add ~/.config/ghostty/config.ghostty
 dgit add ~/.config/starship.toml
@@ -36,7 +38,7 @@ dgit diff --cached
 dgit diff --cached --name-only
 ```
 
-Block the commit if any of these appear in the staged diff: private keys, tokens, `.proxyenv`, `.zprofile`, `.gitconfig`, `.ssh/config`, `.npmrc`, or any line below a local marker.
+Block the commit if any of these appear in the staged diff: private keys, tokens, `.proxyenv`, `.ssh/config`, `.npmrc`, `.gitconfig`, or any content inside a LOCAL block.
 
 ## 3. Commit
 
@@ -46,13 +48,13 @@ dgit commit -m "Describe the change"
 
 ## 4. Push — use the isolated clone when local content exists
 
-If the machine's managed files contain **no** machine-local sections (e.g. `.zshrc` has nothing below its remote end marker, `.codex/config.toml` has nothing below its marker), you can push directly:
+If the machine's tracked files contain **no** LOCAL-block content (e.g. the blocks are still empty templates), you can push directly:
 
 ```zsh
 dgit push origin main
 ```
 
-But if any tracked file carries a local-only section, **do not push from the work-tree.** It risks leaking local config. Instead, strip the local sections in an isolated clone under `/tmp`:
+But if any tracked file carries LOCAL-block content, **do not push from the work-tree.** It risks leaking the machine's local config. Instead, strip the LOCAL blocks in an isolated clone under `/tmp`:
 
 ```zsh
 mkdir -p /tmp/dotfile-merge
@@ -62,20 +64,19 @@ git --git-dir=/tmp/dotfile-merge/dotfile.git \
     --work-tree=/tmp/dotfile-merge/worktree checkout -f main
 ```
 
-Copy the managed content out of the machine's files, discarding everything below each local marker:
+Copy the managed content out of the machine's files, dropping every LOCAL block:
 
-```zsh
-# .zshrc — keep the whole file, but strip from the remote end marker:
-#   sed '/^# =========remote end==============$/q' ~/.zshrc
+```sh
+# Remove a LOCAL block (both markers and everything between).
+strip_local() { awk '/===== LOCAL =====/{s=1} !s{print} /===== END LOCAL =====/{s=0}' "$1"; }
 
-# .codex/config.toml — keep what's above the local-only marker:
-sed '/^# ---- Local-only additions below ----$/q' ~/.codex/config.toml \
-  | head -n -1 > /tmp/dotfile-merge/worktree/.codex/config.toml
-
-# .config/opencode/opencode.jsonc — keep what's above the local config marker:
-sed '/\/\/ ======= local config ===$/q' ~/.config/opencode/opencode.jsonc \
-  | head -n -1 > /tmp/dotfile-merge/worktree/.config/opencode/opencode.jsonc
+strip_local ~/.zshrc                            > /tmp/dotfile-merge/worktree/.zshrc
+strip_local ~/.zprofile                         > /tmp/dotfile-merge/worktree/.zprofile
+strip_local ~/.codex/config.toml                > /tmp/dotfile-merge/worktree/.codex/config.toml
+strip_local ~/.config/opencode/opencode.jsonc   > /tmp/dotfile-merge/worktree/.config/opencode/opencode.jsonc
 ```
+
+(The match is on `===== LOCAL =====` / `===== END LOCAL =====` anywhere in a line, so it works regardless of the comment char — `#` for zsh/toml, `//` for opencode.)
 
 Verify the extracted files are still valid before committing:
 

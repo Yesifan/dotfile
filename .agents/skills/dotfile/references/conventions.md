@@ -1,6 +1,6 @@
 # Conventions
 
-> **Scope:** this reference is for the **production / machine path** (operating an installed machine's `$HOME` config via bare repo `$HOME/.cfg` and `dgit`). This is *not* the dotfiles source repo; editing the source repo (a normal clone) is plain `git` with no marker files present.
+> **Scope:** this reference is for the **production / machine path** (operating an installed machine's `$HOME` config via bare repo `$HOME/.cfg` and `dgit`). This is _not_ the dotfiles source repo; editing the source repo (a normal clone) is plain `git` with no marker files present.
 
 The rules that keep the repo clean and each machine's local config safe. Everything here follows from one fact: **the work-tree of the bare repo is the user's real `$HOME`, so every git operation affects their actual files.** Read this before touching anything.
 
@@ -12,34 +12,38 @@ alias dgit='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 
 `dgit` is `git` pointed at the bare repo (`$HOME/.cfg`) with a work-tree of `$HOME`. Every bare-repo operation goes through it. Never run plain `git` in `$HOME` against this repo — it would either operate on the wrong repo or, worse, treat the user's home as a repo.
 
-The alias is defined in `~/.config/zsh/zshrc`, so it is available in an interactive shell. In a non-interactive context (scripts, agents), re-declare it or use the full `git --git-dir=... --work-tree=...` form.
+The alias is defined in `~/.config/zsh/rc.d/10-main.zsh`, so it is available in an interactive shell. In a non-interactive context (scripts, agents), re-declare it or use the full `git --git-dir=... --work-tree=...` form.
 
 ## Which files are tracked
 
-The repo only ever holds **explicitly added** files — never `dgit add -u`, `.`, or `-a`. To see what's tracked, run `dgit ls-files`; the machine-local vs managed split is the marker rule below. Since the bare repo's work-tree is `$HOME`, everything under `$HOME` is either a tracked file or an untracked machine file.
+The repo only ever holds **explicitly added** files — never `dgit add -u`, `.`, or `-a`. To see what's tracked, run `dgit ls-files`; the machine-local vs managed split is the LOCAL-block rule below. Since the bare repo's work-tree is `$HOME`, everything under `$HOME` is either a tracked file or an untracked machine file.
 
-## Marker files
+## LOCAL blocks
 
-Three files carry both managed and local content. The **marker** draws the line. Above it is repo-managed; below it is machine-local.
+The repo owns whole tracked files. Machine-local content *inside* a tracked file is wrapped in a **LOCAL block** using the file's comment character. The repo ships these blocks **empty** (just the markers); each machine fills them in.
 
-| File | Marker (top = managed, bottom = local) |
-|------|-----------------------------------------|
-| `.zshrc` | `# =========remote config============` … `# =========remote end==============` |
-| `.codex/config.toml` | `# ---- Local-only additions below ----` |
-| `.config/opencode/opencode.jsonc` | `// ======= local config ===` … `// ======= local config end ===` |
+| File | Comment char | LOCAL block |
+|------|--------------|-------------|
+| `.zshrc`, `.zshenv`, `.zprofile`, `.config/shell/main.zsh`, `.codex/config.toml` | `#` | `# ===== LOCAL =====` … `# ===== END LOCAL =====` |
+| `.config/opencode/opencode.jsonc` | `//` | `// ===== LOCAL =====` … `// ===== END LOCAL =====` |
 
-**Conflict resolution** — when a pull or rebase conflicts on a tracked file, decide who owns the line:
+The repo ships these files **without** LOCAL blocks. If a machine needs local content in one, it adds a block there — don't pre-add empty blocks just for show.
 
-| File / section | Owner | Strategy |
-|----------------|-------|----------|
-| `.zshrc` — inside the remote marker block | remote | remote takes precedence (theirs) |
-| `.zshrc` — below the remote end marker | local | preserve local (ours), never commit |
-| `.codex/config.toml` — above the local-only marker | remote | remote takes precedence (theirs) |
-| `.codex/config.toml` — below the marker | local | preserve local (ours), never commit |
-| `.config/opencode/opencode.jsonc` — above the local config marker | remote | remote takes precedence (theirs) |
-| `.config/opencode/opencode.jsonc` — below the marker | local | preserve local (ours), never commit |
-| `.zprofile`, `.ssh/config`, `.npmrc`, `.gitconfig` | local | never in repo |
+Two rules govern them:
+
+- **On pull / rebase: preserve your LOCAL block.** It's machine-local ("ours"). Shared lines take the remote version; the block stays put.
+- **On push: never push LOCAL-block content.** Strip the blocks before committing/pushing shared changes so machine-specific settings and secrets stay off the shared repo.
+
+**Conflict resolution** — when a pull or rebase conflicts on a tracked file:
+
+| Where | Owner | Strategy |
+|-------|-------|----------|
+| Inside a LOCAL block | local | preserve local (ours), never push |
+| Everywhere else in the file | remote | remote takes precedence (theirs) |
+| `.zprofile`, `.ssh/config`, `.npmrc`, `.gitconfig`, secrets | local | never in repo |
 | `.agents/.skill-lock.json` | remote + local | merge — local installs coexist with repo entries |
+
+> Don't confuse the two "LOCAL" things: a **LOCAL block** is a marker inside a tracked file (machine content). The **LOCAL commit** below is a git topology convention (machine `main` stays one ahead). They're related but separate.
 
 ## The LOCAL commit convention
 

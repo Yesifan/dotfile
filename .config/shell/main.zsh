@@ -1,13 +1,14 @@
-# Cross-platform interactive zsh configuration.
+# Shared interactive zsh config — sourced by ~/.zshrc. One file for now;
+# split further (history/completion/keybindings/tools/plugins) only if it grows.
+# Machine-local tool inits/aliases go in ~/.zshrc's LOCAL block instead.
 
 # Dotfiles bare repository helper.
 alias dgit='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 
-# History.
+# ---- History ----
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=100000
 SAVEHIST=100000
-
 setopt append_history
 setopt inc_append_history
 setopt share_history
@@ -17,19 +18,15 @@ setopt hist_ignore_space
 setopt hist_reduce_blanks
 setopt hist_verify
 
-# Completion.
+# ---- Completion ----
 autoload -Uz compinit
-if [[ -n "${ZDOTDIR:-}" ]]; then
-  compinit -d "$ZDOTDIR/.zcompdump"
-else
-  compinit -d "$HOME/.zcompdump"
-fi
+compinit -d "$HOME/.config/shell/.zcompdump"
 zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' group-name ''
 
-# Prefix history search with up/down arrows.
+# ---- Prefix history search ----
 autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
@@ -38,10 +35,10 @@ bindkey '^[[B' down-line-or-beginning-search
 bindkey '^[OA' up-line-or-beginning-search
 bindkey '^[OB' down-line-or-beginning-search
 
-# zoxide: smarter directory jumping.
+# ---- zoxide: directory jumping ----
 command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
 
-# fzf: fuzzy finder shell integration for real terminal sessions.
+# ---- fzf: fuzzy finder (real terminal only) ----
 if command -v fzf >/dev/null 2>&1 && [[ -t 0 ]]; then
   if fzf --zsh >/dev/null 2>&1; then
     source <(fzf --zsh)
@@ -51,33 +48,32 @@ if command -v fzf >/dev/null 2>&1 && [[ -t 0 ]]; then
   fi
 fi
 
-# starship: prompt.
+# ---- starship: prompt ----
 if command -v starship >/dev/null 2>&1 && [[ "${TERM:-}" != dumb ]]; then
   eval "$(starship init zsh)"
 fi
 
-
-# Autosuggestions.
+# ---- Autosuggestions ----
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
 for autosuggest_file in \
   /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
   /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
   /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
   /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh \
-  $HOME/.local/share/zsh-autosuggestions/zsh-autosuggestions.zsh; do
+  "$HOME/.local/share/zsh-autosuggestions/zsh-autosuggestions.zsh"; do
   if [[ -r "$autosuggest_file" ]]; then
     source "$autosuggest_file"
     break
   fi
 done
 
-# Syntax highlighting should be loaded at the end of .zshrc.
+# ---- Syntax highlighting — load last to keep the engine consistent ----
 for syntax_highlight_file in \
   /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
   /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
   /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
   /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
-  $HOME/.local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh; do
+  "$HOME/.local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"; do
   if [[ -r "$syntax_highlight_file" ]]; then
     source "$syntax_highlight_file"
     break

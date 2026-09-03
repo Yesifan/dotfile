@@ -1,11 +1,8 @@
-# Thin interactive zsh entrypoint.
-# Keep stable shared config in ~/.config/zsh/zshrc.
+# Standard interactive zsh entrypoint — kept at ~/.zshrc (not $ZDOTDIR) so
+# third-party installers that write to ~/.zshrc still work. Shared behavior
+# lives in ~/.config/shell/. Add machine-local config below, wrapped in a
+# LOCAL block per the dotfile skill so it's preserved on pull and never pushed.
 
-# =========remote config============
-# This section is managed by the remote dotfiles repo.
-# On dgit pull, conflicts here are resolved with remote (theirs).
-
-[[ -r "$HOME/.config/zsh/zshrc" ]] && source "$HOME/.config/zsh/zshrc"
-
-# =========remote end==============
-# Everything below this line is machine-local. Do NOT commit.
+for file in "$HOME"/.config/shell/*.zsh; do
+  [[ -r "$file" ]] && source "$file"
+done

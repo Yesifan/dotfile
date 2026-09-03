@@ -61,7 +61,7 @@ dgit log --oneline --graph -3        # local exactly 1 ahead of origin/main
 
 ## If the pull/rebase conflicts on a tracked file
 
-Decide who owns each conflicting region (see [conventions.md](conventions.md) — remote for the managed top section, local for anything below a marker). Resolve the markers, then:
+Decide who owns each conflicting region (see [conventions.md](conventions.md) — remote for shared lines, preserve anything inside a LOCAL block). Resolve it, then:
 
 ```zsh
 dgit add ~/.zshrc                   # or whichever file conflicted
@@ -74,7 +74,7 @@ If conflicts recur or you want a clean reset, abort and redo cleanly:
 dgit rebase --abort
 dgit fetch origin
 dgit reset --hard origin/main
-# then re-apply any machine-local blocks from a backup, below the marker.
+# then re-apply any machine-local content from a backup, inside the LOCAL block.
 ```
 
 ## After the update

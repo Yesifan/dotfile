@@ -40,8 +40,10 @@ Two rules govern them:
 |-------|-------|----------|
 | Inside a LOCAL block | local | preserve local (ours), never push |
 | Everywhere else in the file | remote | remote takes precedence (theirs) |
-| `.zprofile`, `.ssh/config`, `.npmrc`, `.gitconfig`, secrets | local | never in repo |
+| `.zprofile`, `.ssh/config`, `.npmrc`, `.gitconfig`, `.pi/agent/settings.json`, secrets | local | never in repo |
 | `.agents/.skill-lock.json` | remote + local | merge — local installs coexist with repo entries |
+
+Pi's tracked files are its shared resources only (`~/.pi/agent/AGENTS.md` — a relative symlink to `.codex/AGENTS.md` — plus `~/.pi/agent/prompts/` and the shared permission policy). Its `settings.json` is machine-owned — it is strict JSON and can't hold a LOCAL block, so it belongs with the other never-in-repo files.
 
 > Don't confuse the two "LOCAL" things: a **LOCAL block** is a marker inside a tracked file (machine content). The **LOCAL commit** below is a git topology convention (machine `main` stays one ahead). They're related but separate.
 

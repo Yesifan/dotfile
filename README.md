@@ -16,6 +16,7 @@ The repo owns all the shared config. Each machine's secrets, paths, and personal
 | Ghostty   | `~/.config/ghostty/config.ghostty` |
 | Codex CLI | `~/.codex/*`                       |
 | OpenCode  | `~/.config/opencode/*`             |
+| Pi        | `~/.pi/agent/*`                    |
 
 LOCAL blocks mark machine-local content in any tracked file:
 
@@ -23,6 +24,8 @@ LOCAL blocks mark machine-local content in any tracked file:
 - `.config/opencode/opencode.jsonc` — `// ===== LOCAL =====` … `// ===== END LOCAL =====`
 
 Content inside a LOCAL block is machine-local (preserved on pull/rebase, stripped before push); everything else is repo-managed (remote wins on conflict).
+
+Pi's `~/.pi/agent/settings.json` cannot carry a LOCAL block (it is strict JSON and Pi warns-and-ignores any comment), so the repo only tracks Pi's **shared resources** — `~/.pi/agent/AGENTS.md` (a symlink to `.codex/AGENTS.md`), `~/.pi/agent/prompts/`, and the shared permission policy. Its `settings.json` is dominated by machine-local provider/model/package config and stays on the machine, like `.gitconfig` and `.zprofile`.
 
 ## Tools
 

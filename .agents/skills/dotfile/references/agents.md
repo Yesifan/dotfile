@@ -4,29 +4,36 @@ The codebase uses AI coding agents (Codex, OpenCode, pi) with shared skills and 
 
 ## AGENTS.md project instructions
 
-The two AI agents (Codex, OpenCode) each read a project instruction file named `AGENTS.md`. These are unified behind a single source of truth using a **relative symlink**:
+The three AI agents (Codex, OpenCode, pi) read instructions from an `AGENTS.md`, unified behind a single source of truth using **relative symlinks**:
 
 - `.codex/AGENTS.md` — the canonical, real file; the only place to edit.
 - `.config/opencode/AGENTS.md` — a symlink to `../../.codex/AGENTS.md`.
+- `.pi/agent/AGENTS.md` — a symlink to `../../.codex/AGENTS.md` (Pi's global instructions).
 
 ### How it was done
 
 1. Keep `.codex/AGENTS.md` as the real file (it already held the superset of the rules).
-2. Replace `.config/opencode/AGENTS.md` with a symlink instead of a second copy:
+2. Replace `.config/opencode/AGENTS.md` and `.pi/agent/AGENTS.md` with symlinks instead of copies:
 
    ```zsh
    rm .config/opencode/AGENTS.md
    ln -s ../../.codex/AGENTS.md .config/opencode/AGENTS.md
-   git add .codex/AGENTS.md .config/opencode/AGENTS.md
+   rm .pi/agent/AGENTS.md
+   ln -s ../../.codex/AGENTS.md .pi/agent/AGENTS.md
+   git add .codex/AGENTS.md .config/opencode/AGENTS.md .pi/agent/AGENTS.md
    ```
 
-The path is **relative** (`../../.codex/AGENTS.md`) so it resolves whether you're in the repo checkout or on a machine where the dotfiles are installed via the bare repo (i.e. `$HOME/.config/opencode/` → `$HOME/.codex/AGENTS.md`, and in a clone root → `<repo>/.codex/AGENTS.md`). Git records the link as a symlink (mode `120000`), so it survives `clone` and `dgit` checkout on other machines.
+The path is **relative** (`../../.codex/AGENTS.md`) so it resolves whether you're in the repo checkout or on a machine where the dotfiles are installed via the bare repo (i.e. `$HOME/.config/opencode/` → `$HOME/.codex/AGENTS.md`, `$HOME/.pi/agent/` → `$HOME/.codex/AGENTS.md`, and in a clone root → `<repo>/.codex/AGENTS.md`). Git records the link as a symlink (mode `120000`), so it survives `clone` and `dgit` checkout on other machines.
 
 ### Behaviour to remember
 
-- **Edit one, update all:** editing either path edits the canonical file, so Codex and OpenCode always read identical instructions.
-- **Delete the link, keep the source:** `rm` / `git rm` on `.config/opencode/AGENTS.md` removes only the link; `.codex/AGENTS.md` survives.
-- **Don't delete the canonical** unless intentional: removing `.codex/AGENTS.md` leaves a _dangling_ opencode link (a broken path, not a deleted file). Recreate it with `ln -s ../../.codex/AGENTS.md .config/opencode/AGENTS.md`.
+- **Edit one, update all:** editing any path edits the canonical file, so Codex, OpenCode, and Pi always read identical instructions.
+- **Delete a link, keep the source:** `rm` / `git rm` on `.config/opencode/AGENTS.md` or `.pi/agent/AGENTS.md` removes only the link; `.codex/AGENTS.md` survives.
+- **Don't delete the canonical** unless intentional: removing `.codex/AGENTS.md` leaves _dangling_ opencode/pi links (broken paths, not deleted files). Recreate them with `ln -s ../../.codex/AGENTS.md <dir>/AGENTS.md`.
+
+## Pi config
+
+Pi reads its global instructions/resources from a machine path, not the project: `~/.pi/agent/` (AGENTS.md, prompts, skills, extensions). The repo tracks only Pi's **shared resources** — `.pi/agent/AGENTS.md` (a symlink to `.codex/AGENTS.md`), `.pi/agent/prompts/`, and the shared permission policy. Its `settings.json` is machine-owned (strict JSON, no LOCAL block) and holds the provider/model/package config, so it stays on the machine like `.gitconfig`/`.zprofile`.
 
 ## Environment variables
 

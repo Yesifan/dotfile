@@ -66,8 +66,6 @@ extends = ":workspace"
 ".git" = "write"
 ".git/**" = "write"
 
-".codex" = "read"
-
 "*.pem" = "deny"
 "**/*.pem" = "deny"
 "*.key" = "deny"

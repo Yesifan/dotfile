@@ -1,12 +1,20 @@
-model = "gpt-5.6-luna"
+# ============================================================
+# Codex Config
+# Codex config.toml 配置参考：https://learn.chatgpt.com/docs/config-file/config-reference
+# Codex 权限配置文档：https://learn.chatgpt.com/docs/permissions
+# ============================================================
+model = "gpt-5.6-sol"
 model_reasoning_effort = "medium"
-
-default_permissions = "dev"
-approval_policy = "on-request"
 
 model_verbosity = "low"             # 输出极简
 personality = "pragmatic"           # 务实风格
 model_reasoning_summary = "concise" # 简短摘要
+
+web_search = "live"
+allow_login_shell = true
+approval_policy = "on-request"
+
+default_permissions = "dev"
 
 [tui]
 status_line = [
@@ -21,54 +29,47 @@ status_line = [
 status_line_use_colors = true
 
 [features]
-js_repl = false
-workspace_dependencies = true
-
-[features.network_proxy]
-enabled = true
+worktrees = true
+network_proxy = true
 
 [features.multi_agent_v2]
 enabled = true
+# 1 root + 最多 5 subagents
 max_concurrent_threads_per_session = 6
-
-[agents]
-max_depth = 1
-
-# permissions
+# 允许等待长任务 subagent
+wait_agent_enabled = true
+# 允许 spawn 时为特定 subagent 选择不同模型 / reasoning effort。
+expose_spawn_agent_model_overrides = true
 
 [permissions.dev]
-description = "Normal local dev"
+description = "General local software development"
 extends = ":workspace"
 
 [permissions.dev.filesystem]
-glob_scan_max_depth = 8
-
 ":minimal" = "read"
+":tmpdir" = "write"
+":slash_tmp" = "write"
 
-# MAC
-"~/Library/pnpm" = "write"
-"~/Library/Caches/pnpm" = "write"
+"~/" = "write"
 
-# Linux
-"~/.npm" = "write"
-"~/.nvm/versions/node" = "read"
-
-"~/.cache/uv" = "write"
-"~/.cache/Cypress" = "write"
-"~/.cache/puppeteer" = "write"
-"~/.cache/ms-playwright" = "write"
-"~/.local/share/pnpm/store" = "write"
-
-"~/.local/share/opencode" = "write"
-
+# 收回敏感目录
+"~/.ssh" = "deny"
+"~/.gnupg" = "deny"
+"~/.aws" = "deny"
+"~/.kube" = "deny"
+"~/.azure" = "deny"
+"~/.config/gcloud" = "deny"
+"~/.password-store" = "deny"
 
 [permissions.dev.filesystem.":workspace_roots"]
 "." = "write"
 ".git" = "write"
 ".git/**" = "write"
+
+".codex" = "read"
+
 "*.pem" = "deny"
 "**/*.pem" = "deny"
-
 "*.key" = "deny"
 "**/*.key" = "deny"
 
@@ -77,50 +78,10 @@ enabled = true
 allow_local_binding = true
 
 [permissions.dev.network.domains]
-"::1" = "allow"
+"*" = "allow"
 "localhost" = "allow"
 "127.0.0.1" = "allow"
-
-
-# ----------------------------------------
-# npm / pnpm：依赖解析、下载、audit、发布
-# ----------------------------------------
-"www.npmjs.com" = "allow"
-"registry.npmjs.org" = "allow"
-"registry.npmmirror.com" = "allow"
-"cdn.npmmirror.com" = "allow"
-
-# ----------------------------------------
-# Python / pip / uv：PyPI 依赖
-# ----------------------------------------
-"pypi.org" = "allow"
-"files.pythonhosted.org" = "allow"
-"upload.pypi.org" = "allow"
-"bootstrap.pypa.io" = "allow"
-
-# ----------------------------------------
-# Node.js / pnpm / uv / Python 工具链安装
-# ----------------------------------------
-"nodejs.org" = "allow"
-"get.pnpm.io" = "allow"
-"astral.sh" = "allow"
-"downloads.python.org" = "allow"
-"www.python.org" = "allow"
-
-# ----------------------------------------
-# GitHub：Git 依赖、uv Python、Release 二进制
-# ----------------------------------------
-"github.com" = "allow"
-"api.github.com" = "allow"
-"codeload.github.com" = "allow"
-"**.githubusercontent.com" = "allow"
-
-# ----------------------------------------
-# 可选：uv Docker 镜像、GitHub Container Registry
-# ----------------------------------------
-"ghcr.io" = "allow"
-"pkg-containers.githubusercontent.com" = "allow"
-
+"::1" = "allow"
 
 [permissions.dev.network.unix_sockets]
 "/var/run/docker.sock" = "allow"
@@ -131,7 +92,8 @@ url = "https://mcp.context7.com/mcp"
 bearer_token_env_var = "CONTEXT7_API_KEY"
 default_tools_approval_mode = "approve"
 
-[mcp_servers.playwright]
-command = "pnpm"
-args = ["dlx", "-y", "@playwright/mcp@latest"]
-default_tools_approval_mode = "approve"
+# codex 自带的游览器插件可能效果更好，需要时在项目级启用
+# [mcp_servers.playwright]
+# command = "pnpm"
+# args = ["dlx", "-y", "@playwright/mcp@latest"]
+# default_tools_approval_mode = "approve"

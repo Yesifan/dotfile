@@ -1,0 +1,240 @@
+# ============================================================
+# Codex Escalation Rules
+# Codex 权限配置文档：https://learn.chatgpt.com/docs/permissions
+# ============================================================
+
+
+# ============================================================
+# Privilege escalation
+# ============================================================
+
+prefix_rule(
+    pattern = ["sudo"],
+    decision = "prompt",
+    justification = "System-level privilege escalation requires explicit approval.",
+)
+
+prefix_rule(
+    pattern = ["su"],
+    decision = "prompt",
+    justification = "Changing user identity requires explicit approval.",
+)
+
+
+# ============================================================
+# System services
+# ============================================================
+
+prefix_rule(
+    pattern = ["systemctl"],
+    decision = "prompt",
+    justification = "Changing host system services requires explicit approval.",
+)
+
+prefix_rule(
+    pattern = ["service"],
+    decision = "prompt",
+    justification = "Changing host system services requires explicit approval.",
+)
+
+
+# ============================================================
+# Filesystem mounts
+# ============================================================
+
+prefix_rule(
+    pattern = ["mount"],
+    decision = "prompt",
+    justification = "Filesystem mount operations require explicit approval.",
+)
+
+prefix_rule(
+    pattern = ["umount"],
+    decision = "prompt",
+    justification = "Filesystem unmount operations require explicit approval.",
+)
+
+
+# ============================================================
+# Host users / groups
+# ============================================================
+
+prefix_rule(
+    pattern = ["useradd"],
+    decision = "prompt",
+    justification = "Changing host users requires explicit approval.",
+)
+
+prefix_rule(
+    pattern = ["userdel"],
+    decision = "prompt",
+    justification = "Changing host users requires explicit approval.",
+)
+
+prefix_rule(
+    pattern = ["usermod"],
+    decision = "prompt",
+    justification = "Changing host users requires explicit approval.",
+)
+
+prefix_rule(
+    pattern = ["groupadd"],
+    decision = "prompt",
+    justification = "Changing host groups requires explicit approval.",
+)
+
+prefix_rule(
+    pattern = ["groupdel"],
+    decision = "prompt",
+    justification = "Changing host groups requires explicit approval.",
+)
+
+prefix_rule(
+    pattern = ["groupmod"],
+    decision = "prompt",
+    justification = "Changing host groups requires explicit approval.",
+)
+
+
+# ============================================================
+# Host package managers
+# ============================================================
+#
+# npm/pnpm/pip/uv/cargo are intentionally NOT listed.
+#
+# These rules are for operating-system package managers.
+
+prefix_rule(
+    pattern = ["apt"],
+    decision = "prompt",
+    justification = "Installing or removing host packages requires explicit approval.",
+)
+
+prefix_rule(
+    pattern = ["apt-get"],
+    decision = "prompt",
+    justification = "Installing or removing host packages requires explicit approval.",
+)
+
+prefix_rule(
+    pattern = ["dnf"],
+    decision = "prompt",
+    justification = "Installing or removing host packages requires explicit approval.",
+)
+
+prefix_rule(
+    pattern = ["yum"],
+    decision = "prompt",
+    justification = "Installing or removing host packages requires explicit approval.",
+)
+
+prefix_rule(
+    pattern = ["pacman"],
+    decision = "prompt",
+    justification = "Installing or removing host packages requires explicit approval.",
+)
+
+prefix_rule(
+    pattern = ["zypper"],
+    decision = "prompt",
+    justification = "Installing or removing host packages requires explicit approval.",
+)
+
+prefix_rule(
+    pattern = ["brew"],
+    decision = "prompt",
+    justification = "Changing machine-level Homebrew packages requires explicit approval.",
+)
+
+
+# ============================================================
+# Machine power
+# ============================================================
+
+prefix_rule(
+    pattern = ["shutdown"],
+    decision = "forbidden",
+    justification = "Codex must not shut down the host. Run this command manually if required.",
+)
+
+prefix_rule(
+    pattern = ["reboot"],
+    decision = "forbidden",
+    justification = "Codex must not reboot the host. Run this command manually if required.",
+)
+
+prefix_rule(
+    pattern = ["poweroff"],
+    decision = "forbidden",
+    justification = "Codex must not power off the host. Run this command manually if required.",
+)
+
+
+# ============================================================
+# Firewall / host networking
+# ============================================================
+
+prefix_rule(
+    pattern = ["iptables"],
+    decision = "prompt",
+    justification = "Changing host firewall rules requires explicit approval.",
+)
+
+prefix_rule(
+    pattern = ["nft"],
+    decision = "prompt",
+    justification = "Changing host firewall rules requires explicit approval.",
+)
+
+prefix_rule(
+    pattern = ["ufw"],
+    decision = "prompt",
+    justification = "Changing host firewall rules requires explicit approval.",
+)
+
+
+# ============================================================
+# Kernel modules
+# ============================================================
+
+prefix_rule(
+    pattern = ["modprobe"],
+    decision = "prompt",
+    justification = "Changing kernel modules requires explicit approval.",
+)
+
+prefix_rule(
+    pattern = ["insmod"],
+    decision = "prompt",
+    justification = "Loading kernel modules requires explicit approval.",
+)
+
+prefix_rule(
+    pattern = ["rmmod"],
+    decision = "prompt",
+    justification = "Removing kernel modules requires explicit approval.",
+)
+
+
+# ============================================================
+# Disk / filesystem creation
+# ============================================================
+
+prefix_rule(
+    pattern = ["fdisk"],
+    decision = "forbidden",
+    justification = "Disk partition operations must be performed manually.",
+)
+
+prefix_rule(
+    pattern = ["parted"],
+    decision = "forbidden",
+    justification = "Disk partition operations must be performed manually.",
+)
+
+prefix_rule(
+    pattern = ["mkfs"],
+    decision = "forbidden",
+    justification = "Filesystem creation is destructive and must be performed manually.",
+)
+

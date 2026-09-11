@@ -10,6 +10,8 @@
 ### Subagents
 - Assign work you will not duplicate.
 
+- Conduct an independent review using the subagent.
+
 - When a task has a clear plan, delegate subtasks whose intermediate process is not needed and where only the final implementation or research result matters.
 
 - If the exact code or documentation location is unknown, delegate exploration to a subagent and have it return the relevant paths/symbols for targeted reading.

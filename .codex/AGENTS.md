@@ -2,11 +2,17 @@
 
 ## Rule
 
-- When I'm just asking questions, seeking opinions, or discussing plans, don't start implementation without authorization.
+- Correctly distinguish my intentions and do not directly start performing complex editing tasks without my explicit indication.
+
+- Seek help when encountering problems.
+
+
+### Subagents
+- Assign work you will not duplicate.
 
 - When a task has a clear plan, delegate subtasks whose intermediate process is not needed and where only the final implementation or research result matters.
 
-- Seek help when encountering problems.
+- If the exact code or documentation location is unknown, delegate exploration to a subagent and have it return the relevant paths/symbols for targeted reading.
 
 ### When Coding
 

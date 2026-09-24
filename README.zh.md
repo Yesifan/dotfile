@@ -29,17 +29,25 @@ LOCAL 块内是机器本地内容（pull/rebase 时保留、推送前剥离）�
 
 ## 依赖工具
 
-`zsh`、`starship`、`zoxide`、`fzf`、`zsh-autosuggestions`、`zsh-syntax-highlighting`、`tmux`、`git-delta`、`ripgrep`、`fd`、`jq`、Vim、Ghostty。每个可选工具块都用 `command -v` 守卫，新机器可先加载 shell 再安装工具。
+必装：**Neovim >= 0.11**（默认 `EDITOR` 和 `VISUAL`）及 **git-delta**（Git 分页器和交互式 diff 过滤器），基础环境还需要 Git 和 Zsh。配置中的编辑器和 Git 工作流依赖这些工具。
 
-另外推荐：`gh`（GitHub CLI），用于管理 GitHub 仓库、PR 和 Issue；NvChad（Neovim 配置），提供更完整的编辑环境。仓库包含最小化 NvChad 配置，支持 SSH 下的 OSC 52 剪贴板和普通 `y` / `d` / `p` 操作。依赖、启动方式和 tmux 限制见 [NvChad 说明](.agents/skills/dotfile/references/packages/nvchad.md)。
+推荐：`starship`、`zoxide`、`fzf`、`zsh-autosuggestions`、`zsh-syntax-highlighting`、`tmux`（安装时须 >= 3.5）、`ripgrep`、`fd`、`jq`、`gh`（GitHub CLI）、Ghostty。可选 Shell 集成均有存在性检查，未安装时也能启动 Shell。保留 Vim 配置供偶尔使用。
+
+仓库包含最小化 NvChad 配置，使用共享插件锁文件，支持 SSH 下的 OSC 52 剪贴板和普通 `y` / `d` / `p` 操作。Ghostty 选中文字时不再自动复制。启动、插件同步和 tmux 限制见 [NvChad 说明](.agents/skills/dotfile/references/packages/nvchad.md)。
 
 ## 包管理工具偏好
 
-- `mise`：管理开发工具和运行时版本。
+- `mise`：管理开发工具和运行时版本；仅推荐，不强制安装，也不自动激活。
 - `pnpm`：管理 JavaScript / TypeScript 包。
 - `uv`：管理 Python 环境、依赖和工具。
 
 优先遵循现有项目明确的工具配置和锁文件，不因这些偏好自动迁移已有项目。
+
+## 环境体检
+
+部署配置后打开新 Shell，运行 `dotfile-doctor`。命令由 `~/.config/shell/doctor.zsh` 定义，默认检查 `$HOME` 下的工具、兼容版本、配置文件和共享 Agent 符号链接。检查源码仓库可运行 `dotfile-doctor /path/to/dotfile`。
+
+缺少必需依赖或配置无效时返回非零退出码；缺少可选工具只提示，不判失败。命令不会安装工具或修改配置。
 
 ## 安装 / 维护 / 更新
 

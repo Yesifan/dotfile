@@ -32,17 +32,25 @@ Pi's `~/.pi/agent/settings.json` cannot carry a LOCAL block (it is strict JSON a
 
 ## Tools
 
-`zsh`, `starship`, `zoxide`, `fzf`, `zsh-autosuggestions`, `zsh-syntax-highlighting`, `tmux`, `git-delta`, `ripgrep`, `fd`, `jq`, Vim, and Ghostty. Every optional tool block is guarded by `command -v`, so a fresh machine loads the shell before tools are installed.
+Required: **Neovim >= 0.11** (the default `EDITOR` and `VISUAL`) and **git-delta** (the Git pager and interactive diff filter), alongside Git and Zsh. These tools must be installed for the configured editor and Git workflows to work.
 
-Also recommended: `gh` (GitHub CLI) for working with GitHub repositories, pull requests, and issues, and NvChad (a Neovim configuration) for a richer editing environment. This repo includes a minimal NvChad configuration with OSC 52 clipboard support over SSH and ordinary `y` / `d` / `p` operations. See the [NvChad setup notes](.agents/skills/dotfile/references/packages/nvchad.md) for requirements, startup, and tmux limitations.
+Recommended: `starship`, `zoxide`, `fzf`, `zsh-autosuggestions`, `zsh-syntax-highlighting`, `tmux` (>= 3.5 if installed), `ripgrep`, `fd`, `jq`, `gh` (GitHub CLI), and Ghostty. Optional shell integrations are guarded so the shell can start before these tools are installed. Vim configuration remains available for occasional use.
+
+The repo includes a minimal NvChad configuration with a shared plugin lockfile, OSC 52 clipboard support over SSH, and ordinary `y` / `d` / `p` operations. Ghostty selection does not automatically copy text. See the [NvChad setup notes](.agents/skills/dotfile/references/packages/nvchad.md) for startup, plugin synchronization, and tmux limitations.
 
 ## Package management preferences
 
-- `mise` for development tools and runtime versions.
+- `mise` for development tools and runtime versions; recommended, not required, and not automatically activated.
 - `pnpm` for JavaScript / TypeScript packages.
 - `uv` for Python environments, dependencies, and tools.
 
 Follow an existing project's explicit tool configuration and lockfiles first. These preferences do not call for automatically migrating existing projects.
+
+## Environment check
+
+Open a new shell after deploying the configuration, then run `dotfile-doctor`. The command is defined in `~/.config/shell/doctor.zsh` and checks tools, supported versions, configuration files, and shared agent symlinks under `$HOME`. To check a source checkout, run `dotfile-doctor /path/to/dotfile`.
+
+Missing required dependencies or invalid configuration return a nonzero exit status. Missing optional tools are reported without failing the check. The command does not install or modify anything.
 
 ## Install, maintain, update
 

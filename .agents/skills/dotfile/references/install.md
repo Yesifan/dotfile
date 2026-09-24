@@ -39,14 +39,20 @@ Or open a new terminal. Missing tools won't cause errors because the config guar
 
 ## 3. Install dependencies
 
-Install the tool chain for the platform. Only install what you actually want; the shell works without them. Example for Debian / Ubuntu:
+Install **Neovim >= 0.11** and **git-delta**: the configuration sets `EDITOR` and `VISUAL` to `nvim` and uses `delta` for Git paging and interactive diffs. Other tools are recommended; if installing tmux, use **tmux >= 3.5**. `mise` remains optional and is not automatically activated. No setup or health-check command installs tools automatically.
+
+Example package list for Debian / Ubuntu:
 
 ```zsh
 sudo apt update
-sudo apt install zsh fzf tmux zsh-autosuggestions zsh-syntax-highlighting git-delta vim ripgrep fd-find jq
+sudo apt install git zsh fzf tmux zsh-autosuggestions zsh-syntax-highlighting git-delta neovim ripgrep fd-find jq
 ```
 
 On other platforms use your package manager (`macOS`/`Linuxbrew`: `brew`, Fedora: `dnf`, Arch: `pacman`) to install the same tool set; `starship`, `zoxide`, and `git-delta` come from their official releases if a distro package is missing.
+
+Check `nvim --version` and `tmux -V` after installation. If distribution packages are too old, use the compatible installation methods in the [Neovim installation guide](https://github.com/neovim/neovim/blob/master/INSTALL.md) or [tmux installation guide](https://github.com/tmux/tmux/wiki/Installing).
+
+The bundled NvChad configuration installs plugins on first launch. Use `:Lazy restore` to match the shared `~/.config/nvim/lazy-lock.json`; see [NvChad setup notes](packages/nvchad.md).
 
 Debian/Ubuntu package `fd` as `fd-find`, and the command may be `fdfind`. If needed, make a `fd` shim:
 
@@ -76,8 +82,10 @@ The shell should start with no errors. Confirm the tracked files are present and
 
 ```zsh
 dgit status --short
-command -v zoxide >/dev/null && echo "zoxide ok"
+dotfile-doctor
 ```
+
+`dotfile-doctor` is defined in `~/.config/shell/doctor.zsh` and becomes available in a new shell. It checks `$HOME` by default; use `dotfile-doctor /path/to/dotfile` to check a source checkout. Required dependency or configuration errors return nonzero; missing optional tools do not fail the check. It never installs tools or edits files.
 
 ## 6. Install Agent Skills (optional)
 

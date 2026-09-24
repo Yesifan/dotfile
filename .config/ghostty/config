@@ -12,7 +12,7 @@ tab-inherit-working-directory = true
 split-inherit-working-directory = true
 
 scrollback-limit = 20000000
-copy-on-select = true
+copy-on-select = false
 clipboard-read = allow
 clipboard-paste-protection = true
 

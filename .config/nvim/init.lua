@@ -26,8 +26,6 @@ require("lazy").setup({
 }, {
   defaults = { lazy = true },
   install = { colorscheme = { "nvchad" } },
-  -- Plugin versions belong to each machine, outside the shared config.
-  lockfile = vim.fn.stdpath("data") .. "/lazy-lock.json",
 })
 
 dofile(vim.g.base46_cache .. "defaults")

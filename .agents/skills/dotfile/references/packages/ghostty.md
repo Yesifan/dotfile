@@ -1,5 +1,7 @@
 # Ghostty 说明
 
+Ghostty 和 Nerd Font 仅安装在运行图形终端的客户端，并在 Ghostty 中选用该字体。无 UI 的 SSH 服务器不需要安装 Ghostty 或 Nerd Font；同步配置文件不等于需要安装客户端软件。
+
 > **范围：** 本文件说明仓库里 `~/.config/ghostty/config` 的行为与平台要点。在 macOS 和 Linux 间共享。
 
 ## 配置路径与平台优先级

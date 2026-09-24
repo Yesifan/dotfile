@@ -38,9 +38,13 @@ Pi's `~/.pi/agent/settings.json` cannot carry a LOCAL block (it is strict JSON a
 
 ## Tools
 
-Required: **Neovim >= 0.11** (the default `EDITOR` and `VISUAL`) and **git-delta** (the Git pager and interactive diff filter), alongside Git and Zsh. These tools must be installed for the configured editor and Git workflows to work.
+Required tools (installation still requires your consent):
 
-Recommended: `starship`, `zoxide`, `fzf`, `zsh-autosuggestions`, `zsh-syntax-highlighting`, `tmux` (>= 3.5 if installed), `ripgrep`, `fd`, `jq`, `gh` (GitHub CLI), and Ghostty. Optional shell integrations are guarded so the shell can start before these tools are installed. Vim configuration remains available for occasional use.
+- **Baseline**: Git, Zsh, Neovim >= 0.11 (default `EDITOR` / `VISUAL`), and git-delta (Git paging and interactive diffs).
+- **Shell experience**: Starship (prompt), zoxide (directory jumping), fzf (fuzzy search), zsh-autosuggestions (history suggestions), and zsh-syntax-highlighting (syntax highlighting).
+- **Server utilities**: tmux >= 3.5 (persistent sessions), ripgrep (`rg`, content search), fd (file search; `fdfind` is also accepted), and jq (JSON processing).
+
+GitHub CLI (`gh`) and Ghostty remain recommended, optional tools. **Ghostty and Nerd Fonts are installed only on the client that runs the graphical terminal; headless SSH servers do not need either.** Select the Nerd Font in the client terminal to display NvChad icons. Shell integrations retain availability guards so missing dependencies do not prevent the shell from starting, but `dotfile-doctor` reports missing required tools or Zsh plugins as failures. Vim configuration remains available for occasional use.
 
 The repo includes a minimal NvChad configuration with a shared plugin lockfile, OSC 52 clipboard support over SSH, and ordinary `y` / `d` / `p` operations. Ghostty selection does not automatically copy text. See the [NvChad setup notes](.agents/skills/dotfile/references/packages/nvchad.md) for startup, plugin synchronization, and tmux limitations.
 

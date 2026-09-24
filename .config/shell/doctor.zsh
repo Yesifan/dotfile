@@ -22,7 +22,7 @@ dotfile-doctor() (
   _dotfile_warn() { print -r -- "WARN  $*"; (( warnings += 1 )); }
 
   print -r -- "Dotfile doctor — config root: $config_root"
-  for tool in git zsh nvim delta; do
+  for tool in git zsh nvim delta starship zoxide fzf rg jq; do
     if (( $+commands[$tool] )); then
       _dotfile_ok "$tool: $commands[$tool]"
     else
@@ -49,7 +49,7 @@ dotfile-doctor() (
     if [[ $output =~ 'tmux ([0-9]+\.[0-9]+)' ]]; then
       version=$match[1]
       if is-at-least 3.5 "$version"; then
-        _dotfile_ok "$output (requires >= 3.5 when installed)"
+        _dotfile_ok "$output (requires >= 3.5)"
       else
         _dotfile_fail "$output: requires >= 3.5 for extended-keys-format csi-u"
       fi
@@ -57,10 +57,10 @@ dotfile-doctor() (
       _dotfile_fail 'tmux: could not determine version'
     fi
   else
-    _dotfile_warn 'tmux: optional command missing'
+    _dotfile_fail 'tmux: required command missing'
   fi
 
-  for tool in mise pnpm uv rg jq gh fzf zoxide starship; do
+  for tool in mise pnpm uv gh; do
     if (( $+commands[$tool] )); then
       _dotfile_ok "$tool: $commands[$tool]"
     else
@@ -70,8 +70,28 @@ dotfile-doctor() (
   if (( $+commands[fd] || $+commands[fdfind] )); then
     _dotfile_ok "fd: ${commands[fd]:-${commands[fdfind]}}"
   else
-    _dotfile_warn 'fd/fdfind: optional command missing'
+    _dotfile_fail 'fd/fdfind: required command missing'
   fi
+
+  for tool in zsh-autosuggestions zsh-syntax-highlighting; do
+    local plugin_file=''
+    for file in \
+      /usr/local/share/$tool/$tool.zsh \
+      /opt/homebrew/share/$tool/$tool.zsh \
+      /usr/share/$tool/$tool.zsh \
+      /usr/share/zsh/plugins/$tool/$tool.zsh \
+      "$HOME/.local/share/$tool/$tool.zsh"; do
+      if [[ -r "$file" ]]; then
+        plugin_file=$file
+        break
+      fi
+    done
+    if [[ -n "$plugin_file" ]]; then
+      _dotfile_ok "$tool: $plugin_file"
+    else
+      _dotfile_fail "$tool: required plugin missing from shell load paths"
+    fi
+  done
 
   for file in .zshenv .zshrc .config/shell/main.zsh .config/git/config \
     .config/nvim/init.lua .config/nvim/lua/clipboard.lua \

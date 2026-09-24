@@ -35,9 +35,13 @@ LOCAL 块内是机器本地内容（pull/rebase 时保留、推送前剥离）�
 
 ## 依赖工具
 
-必装：**Neovim >= 0.11**（默认 `EDITOR` 和 `VISUAL`）及 **git-delta**（Git 分页器和交互式 diff 过滤器），基础环境还需要 Git 和 Zsh。配置中的编辑器和 Git 工作流依赖这些工具。
+必装工具如下，安装前仍需征求你的同意：
 
-推荐：`starship`、`zoxide`、`fzf`、`zsh-autosuggestions`、`zsh-syntax-highlighting`、`tmux`（安装时须 >= 3.5）、`ripgrep`、`fd`、`jq`、`gh`（GitHub CLI）、Ghostty。可选 Shell 集成均有存在性检查，未安装时也能启动 Shell。保留 Vim 配置供偶尔使用。
+- **基础工具**：Git、Zsh、Neovim >= 0.11（默认 `EDITOR` / `VISUAL`）、git-delta（Git 分页与交互式 diff）。
+- **Shell 体验**：Starship（提示符）、zoxide（目录跳转）、fzf（模糊搜索）、zsh-autosuggestions（历史建议）、zsh-syntax-highlighting（语法高亮）。
+- **服务器常用工具**：tmux >= 3.5（持久会话）、ripgrep（`rg`，内容搜索）、fd（文件搜索，也接受 `fdfind`）、jq（JSON 处理）。
+
+GitHub CLI（`gh`）和 Ghostty 保持推荐、选装。**Ghostty 和 Nerd Font 仅安装在运行图形终端的客户端，无 UI 的 SSH 服务器不需要安装。**在客户端终端中选用 Nerd Font 即可显示 NvChad 图标。Shell 集成保留存在性检查，缺少依赖不会阻止 Shell 启动，但 `dotfile-doctor` 会将缺失的必装工具或 Zsh 插件报告为失败。保留 Vim 配置供偶尔使用。
 
 仓库包含最小化 NvChad 配置，使用共享插件锁文件，支持 SSH 下的 OSC 52 剪贴板和普通 `y` / `d` / `p` 操作。Ghostty 选中文字时不再自动复制。启动、插件同步和 tmux 限制见 [NvChad 说明](.agents/skills/dotfile/references/packages/nvchad.md)。
 

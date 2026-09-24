@@ -4,32 +4,34 @@
 
 Set up the dotfiles from scratch. Before you start, sync this skill to the latest so you have the most current install steps (if the runner is missing, obtain dependency-install consent first): `npx skills use YeSifan/dotfile@dotfile`.
 
-Two things to keep in mind: the shell must be loadable before the tools are installed (every optional block is guarded by `command -v`), and the clone is a **bare** repo whose work-tree is `$HOME`.
+Two things to keep in mind: the shell must be loadable before the tools are installed (tool integrations use availability checks), and the clone is a **bare** repo whose work-tree is `$HOME`.
 
 ## 0. Inspect dependencies and get consent
 
 Read [dependency selection and consent](dependencies.md) before installing anything. Check the platform and existing tools first, then:
 
-- List missing or incompatible required dependencies (Git, Zsh, Neovim >= 0.11, git-delta, and any needed NvChad setup prerequisites), their purpose, and the concrete installation/upgrade commands. Obtain the user's consent before running them.
+- Use the full baseline table in [dependencies.md](dependencies.md), including shell tools, server utilities, and any needed NvChad setup prerequisites. List missing or incompatible dependencies with their purpose and concrete installation/upgrade commands. Obtain the user's consent before running them.
 - List applicable optional tools with their purpose and installed status, using the selection table in that reference. Let the user choose any subset or none; do not preselect all recommendations.
 - Install only the approved dependencies and verify versions before deploying configuration that relies on them. Honor any explicit consent already given for the same plan. If required installation is declined, explain what cannot work and leave dependent setup pending.
+
+Distinguish the graphical client from the remote server when proposing dependencies: Ghostty and Nerd Fonts are client-only. A headless server does not need either, even when it runs NvChad; do not offer them as server prerequisites.
 
 An SSH key added to the GitHub account is also needed for the SSH clone below. Do not install a missing skills runner or package manager as an unapproved prerequisite.
 
 ## 1. Complete the approved dependency plan
 
-Follow the choices made in step 0; this step is not permission to install additional packages. Required tools are Neovim >= 0.11 and git-delta, alongside Git and Zsh. Other tools are optional; selected tmux installations must be >= 3.5. `mise` remains recommended, not required or automatically activated.
+Follow the choices made in step 0; this step is not permission to install additional packages. The required baseline includes Git, Zsh, Neovim >= 0.11, git-delta, Starship, zoxide, fzf, zsh-autosuggestions, zsh-syntax-highlighting, tmux >= 3.5, ripgrep, fd, and jq. Use [dependencies.md](dependencies.md) for their purposes and the separate optional choices. `mise` remains recommended, not required or automatically activated.
 
-For Debian / Ubuntu, a **required-only proposal to show the user before execution** is:
+For Debian / Ubuntu, a **required-package example to adapt and show the user before execution** is:
 
 ```zsh
 sudo apt update
-sudo apt install git zsh git-delta neovim
+sudo apt install git zsh git-delta neovim starship zoxide fzf zsh-autosuggestions zsh-syntax-highlighting tmux ripgrep fd-find jq
 ```
 
-Check distribution versions before proposing this command. If they do not meet requirements, propose a compatible method from the [Neovim installation guide](https://github.com/neovim/neovim/blob/master/INSTALL.md) or [tmux installation guide](https://github.com/tmux/tmux/wiki/Installing). Adapt to the platform package manager; package examples are not authorization to run them.
+Check package availability and distribution versions before proposing this command; some releases may not provide every listed package. Include an approved alternative installation method for any missing package. If they do not meet requirements, propose a compatible method from the [Neovim installation guide](https://github.com/neovim/neovim/blob/master/INSTALL.md) or [tmux installation guide](https://github.com/tmux/tmux/wiki/Installing). Adapt to the platform package manager; package examples are not authorization to run them.
 
-Build a separate optional-package command from the user's actual selections. For example, choosing only ripgrep and jq means installing only those optional tools, not the entire recommendation list. Debian/Ubuntu calls the fd package `fd-find` and may expose it as `fdfind`; the environment check accepts either command.
+Build a separate optional-package command from the user's actual selections. For example, choosing only GitHub CLI means adding only `gh`, not the entire recommendation list. Debian/Ubuntu calls the fd package `fd-find` and may expose it as `fdfind`; the environment check accepts either command.
 
 For the approved NvChad setup, first launch downloads plugins. Use `:Lazy restore` to match the shared `~/.config/nvim/lazy-lock.json`; see [NvChad setup notes](packages/nvchad.md). Obtain consent for these downloads before launching Neovim as a verification step if they were not included in the original plan.
 
@@ -63,7 +65,7 @@ Run this only after required dependencies are satisfied; skipped optional tools 
 exec zsh -l
 ```
 
-Or open a new terminal. Missing tools won't cause errors because the config guards every optional feature with `command -v`.
+Or open a new terminal. Tool integrations check availability so missing dependencies do not prevent shell startup; this does not make the required baseline optional.
 
 ## 4. Set up environment variables
 

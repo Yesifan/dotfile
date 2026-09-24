@@ -23,8 +23,17 @@ These rules also cover prerequisites for skill synchronization: if Node.js, pnpm
 | Zsh | Run the managed shell configuration. |
 | Neovim >= 0.11 | Default `EDITOR` / `VISUAL` and the bundled NvChad configuration. |
 | git-delta (`delta`) | Git paging and interactive diff filtering. |
+| Starship | Shell prompt showing directory and development context. |
+| zoxide | Jump to frequently used directories. |
+| fzf | Interactive fuzzy selection and shell history search. |
+| zsh-autosuggestions | Suggest commands from shell history. |
+| zsh-syntax-highlighting | Highlight command-line syntax. |
+| tmux >= 3.5 | Persistent terminal sessions, windows, and panes; requires >= 3.5 for the shipped configuration. |
+| ripgrep (`rg`) | Search file contents. |
+| fd (`fdfind` on some distributions) | Find files and directories. |
+| jq | Query and transform JSON. |
 
-For NvChad, also explain the plugin downloads and any missing setup prerequisites from [nvchad.md](packages/nvchad.md), including a compiler, make, tree-sitter CLI, and a Nerd Font on the terminal machine. Include necessary installation in the approval request rather than silently adding it later.
+For NvChad, explain plugin downloads and missing prerequisites on the machine running Neovim, including a compiler, make, and tree-sitter CLI; see [nvchad.md](packages/nvchad.md). Ghostty and Nerd Fonts belong only on the client running the graphical terminal, not on a headless SSH server. Do not include either in a headless server dependency plan or treat their absence there as a failure. On the client, include any needed font installation and terminal selection in the approval request.
 
 ## Optional choices
 
@@ -32,17 +41,9 @@ Present the tools relevant to the target machine; this is a selection menu, not 
 
 | Tool | Purpose / where useful |
 | --- | --- |
-| Starship | Shell prompt showing directory and development context. |
-| zoxide | Jump to frequently used directories. |
-| fzf | Interactive fuzzy selection and shell history search. |
-| zsh-autosuggestions | Suggest commands from shell history. |
-| zsh-syntax-highlighting | Highlight command-line syntax. |
-| tmux >= 3.5 | Persistent terminal sessions, windows, and panes; installed versions must support the shipped configuration. |
-| ripgrep (`rg`) | Search file contents. |
-| fd (`fdfind` on some distributions) | Find files and directories. |
-| jq | Query and transform JSON. |
 | GitHub CLI (`gh`) | Work with GitHub repositories, pull requests, and issues. |
-| Ghostty | Local graphical terminal; normally installed on the connecting machine, not a headless SSH server. |
+| Ghostty | Graphical terminal for the connecting client only; not needed on a headless SSH server. |
+| Nerd Font | Displays terminal icons on the graphical client; install and select it in the client terminal, not on the headless server. |
 | Vim | Alternative editor; its existing config is retained, but it does not satisfy the Neovim requirement. |
 | mise | Manage development tools and runtime versions; recommended, never required solely by preference. |
 | pnpm | Manage JavaScript / TypeScript packages. |

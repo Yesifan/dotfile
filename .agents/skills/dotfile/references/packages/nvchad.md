@@ -4,7 +4,11 @@
 
 ## 安装与更新
 
-需要 Neovim 0.11 或更高版本、Git、Nerd Font，以及编译器、make 和 tree-sitter CLI；具体平台依赖见 [NvChad 官方安装说明](https://nvchad.com/docs/quickstart/install/)。在本地 Ghostty 中选用 Nerd Font，以显示编辑器图标。
+运行 Neovim 的机器需要 Neovim 0.11 或更高版本、Git，以及编译器、make 和 tree-sitter CLI；具体平台依赖见 [NvChad 官方安装说明](https://nvchad.com/docs/quickstart/install/)。
+
+**Ghostty 和 Nerd Font 仅安装在运行图形终端的客户端 A，并在客户端终端中选用 Nerd Font 显示图标。在 SSH 终端使用场景下，无 UI 的服务器 B 不需要安装 Ghostty 或 Nerd Font，即使 Neovim / NvChad 运行在 B 上。**
+
+SSH 中的中文字形也由客户端字体绘制；服务器需使用正确的文本编码和 UTF-8 locale。若服务器自行生成中文图片、PDF 或浏览器截图，则应为这些渲染任务另行安装所需字体。
 
 Neovim 是必装依赖，Shell 的 `EDITOR` 和 `VISUAL` 均设为 `nvim`。发行版软件包版本过低时，按 [Neovim 官方安装说明](https://github.com/neovim/neovim/blob/master/INSTALL.md) 安装兼容版本。
 

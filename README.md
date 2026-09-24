@@ -11,6 +11,7 @@ The repo owns all the shared config. Each machine's secrets, paths, and personal
 | Zsh       | `~/.zshenv`, `~/.zprofile`, `~/.zshrc`, `~/.config/shell/` |
 | Git       | `~/.config/git/config`                                     |
 | Vim       | `~/.vimrc`                                                 |
+| Neovim / NvChad | `~/.config/nvim/`                                    |
 | Starship  | `~/.config/starship.toml`                                  |
 | tmux      | `~/.tmux.conf`                                             |
 | Ghostty   | `~/.config/ghostty/config`                                 |
@@ -32,6 +33,16 @@ Pi's `~/.pi/agent/settings.json` cannot carry a LOCAL block (it is strict JSON a
 ## Tools
 
 `zsh`, `starship`, `zoxide`, `fzf`, `zsh-autosuggestions`, `zsh-syntax-highlighting`, `tmux`, `git-delta`, `ripgrep`, `fd`, `jq`, Vim, and Ghostty. Every optional tool block is guarded by `command -v`, so a fresh machine loads the shell before tools are installed.
+
+Also recommended: `gh` (GitHub CLI) for working with GitHub repositories, pull requests, and issues, and NvChad (a Neovim configuration) for a richer editing environment. This repo includes a minimal NvChad configuration with OSC 52 clipboard support over SSH and ordinary `y` / `d` / `p` operations. See the [NvChad setup notes](.agents/skills/dotfile/references/packages/nvchad.md) for requirements, startup, and tmux limitations.
+
+## Package management preferences
+
+- `mise` for development tools and runtime versions.
+- `pnpm` for JavaScript / TypeScript packages.
+- `uv` for Python environments, dependencies, and tools.
+
+Follow an existing project's explicit tool configuration and lockfiles first. These preferences do not call for automatically migrating existing projects.
 
 ## Install, maintain, update
 

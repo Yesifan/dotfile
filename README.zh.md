@@ -11,6 +11,7 @@
 | Zsh       | `~/.zshenv`, `~/.zprofile`, `~/.zshrc`, `~/.config/shell/` |
 | Git       | `~/.config/git/config`                                     |
 | Vim       | `~/.vimrc`                                                 |
+| Neovim / NvChad | `~/.config/nvim/`                                    |
 | Starship  | `~/.config/starship.toml`                                  |
 | tmux      | `~/.tmux.conf`                                             |
 | Ghostty   | `~/.config/ghostty/config`                                 |
@@ -29,6 +30,16 @@ LOCAL 块内是机器本地内容（pull/rebase 时保留、推送前剥离）�
 ## 依赖工具
 
 `zsh`、`starship`、`zoxide`、`fzf`、`zsh-autosuggestions`、`zsh-syntax-highlighting`、`tmux`、`git-delta`、`ripgrep`、`fd`、`jq`、Vim、Ghostty。每个可选工具块都用 `command -v` 守卫，新机器可先加载 shell 再安装工具。
+
+另外推荐：`gh`（GitHub CLI），用于管理 GitHub 仓库、PR 和 Issue；NvChad（Neovim 配置），提供更完整的编辑环境。仓库包含最小化 NvChad 配置，支持 SSH 下的 OSC 52 剪贴板和普通 `y` / `d` / `p` 操作。依赖、启动方式和 tmux 限制见 [NvChad 说明](.agents/skills/dotfile/references/packages/nvchad.md)。
+
+## 包管理工具偏好
+
+- `mise`：管理开发工具和运行时版本。
+- `pnpm`：管理 JavaScript / TypeScript 包。
+- `uv`：管理 Python 环境、依赖和工具。
+
+优先遵循现有项目明确的工具配置和锁文件，不因这些偏好自动迁移已有项目。
 
 ## 安装 / 维护 / 更新
 

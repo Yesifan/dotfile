@@ -93,6 +93,33 @@ dotfile-doctor() (
     fi
   done
 
+  # SSH needs the advertised terminal description on the remote machine too.
+  if [[ -z ${TERM:-} || $TERM == dumb ]]; then
+    _dotfile_warn 'terminfo: no full terminal advertised; rerun in the actual SSH session'
+  elif (( ! $+commands[infocmp] || ! $+commands[tput] )); then
+    _dotfile_fail 'terminfo: infocmp/tput missing; terminal compatibility could not be checked'
+  else
+    local -aU terminal_names=("$TERM")
+    local terminal_name outer_terminal
+    if [[ -n ${TMUX:-} ]] && (( $+commands[tmux] )); then
+      if outer_terminal=$(command tmux display-message -p '#{client_termname}' 2>/dev/null) && [[ -n $outer_terminal ]]; then
+        terminal_names+=("$outer_terminal")
+      else
+        _dotfile_warn 'terminfo: tmux client terminal unavailable; also check outside tmux'
+      fi
+    fi
+    for terminal_name in "${terminal_names[@]}"; do
+      if ! command infocmp -x "$terminal_name" >/dev/null 2>&1; then
+        _dotfile_fail "terminfo: $terminal_name missing; install its terminfo entry and reconnect"
+      elif command tput -T "$terminal_name" cup 0 0 >/dev/null 2>&1 && \
+           command tput -T "$terminal_name" el >/dev/null 2>&1; then
+        _dotfile_ok "terminfo: $terminal_name (cursor positioning and line clearing)"
+      else
+        _dotfile_fail "terminfo: $terminal_name lacks usable cursor/line-clear capabilities"
+      fi
+    done
+  fi
+
   for file in .zshenv .zshrc .config/shell/main.zsh .config/git/config \
     .config/nvim/init.lua .config/nvim/lua/clipboard.lua \
     .config/nvim/lazy-lock.json .tmux.conf .config/ghostty/config .codex/AGENTS.md; do

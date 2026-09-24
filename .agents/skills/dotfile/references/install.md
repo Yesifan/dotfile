@@ -16,6 +16,8 @@ Read [dependency selection and consent](dependencies.md) before installing anyth
 
 Distinguish the graphical client from the remote server when proposing dependencies: Ghostty and Nerd Fonts are client-only. A headless server does not need either, even when it runs NvChad; do not offer them as server prerequisites.
 
+For SSH sessions, also follow the [terminal compatibility checks](packages/ghostty.md) on the target server before loading the shell: verify the actual `$TERM` entry and cursor/line-clear capabilities, plus `tmux-256color` when applicable. Missing terminfo or its installation tools belong in the approved dependency plan; client-only GUI installation does not replace this server check.
+
 An SSH key added to the GitHub account is also needed for the SSH clone below. Do not install a missing skills runner or package manager as an unapproved prerequisite.
 
 ## 1. Complete the approved dependency plan
@@ -91,7 +93,7 @@ dgit status --short
 dotfile-doctor
 ```
 
-`dotfile-doctor` is defined in `~/.config/shell/doctor.zsh` and becomes available in a new shell. It checks `$HOME` by default; use `dotfile-doctor /path/to/dotfile` to check a source checkout. Required dependency or configuration errors return nonzero; missing optional tools do not fail the check. It never installs tools or edits files.
+`dotfile-doctor` is defined in `~/.config/shell/doctor.zsh` and becomes available in a new shell. It checks `$HOME` by default; use `dotfile-doctor /path/to/dotfile` to check a source checkout. Required dependency or configuration errors return nonzero; missing optional tools do not fail the check. It never installs tools or edits files. Run it in the actual SSH session to verify terminfo, including the outer client terminal when inside tmux. A check from a non-interactive environment with unset or `dumb` TERM does not establish SSH compatibility. After repairing a missing entry, reconnect and confirm interactive typing and redraw behave correctly before reporting the setup ready.
 
 ## 6. Install Agent Skills (optional)
 

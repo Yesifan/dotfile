@@ -41,7 +41,7 @@ LOCAL 块内是机器本地内容（pull/rebase 时保留、推送前剥离）�
 - **Shell 体验**：Starship（提示符）、zoxide（目录跳转）、fzf（模糊搜索）、zsh-autosuggestions（历史建议）、zsh-syntax-highlighting（语法高亮）。
 - **服务器常用工具**：tmux >= 3.5（持久会话）、ripgrep（`rg`，内容搜索）、fd（文件搜索，也接受 `fdfind`）、jq（JSON 处理）。
 
-GitHub CLI（`gh`）和 Ghostty 保持推荐、选装。**Ghostty 和 Nerd Font 仅安装在运行图形终端的客户端，无 UI 的 SSH 服务器不需要安装。**在客户端终端中选用 Nerd Font 即可显示 NvChad 图标。Shell 集成保留存在性检查，缺少依赖不会阻止 Shell 启动，但 `dotfile-doctor` 会将缺失的必装工具或 Zsh 插件报告为失败。保留 Vim 配置供偶尔使用。
+GitHub CLI（`gh`）和 Ghostty 保持推荐、选装。**Ghostty 和 Nerd Font 仅安装在运行图形终端的客户端，无 UI 的 SSH 服务器不需要安装。**但服务器**必须有与 SSH `$TERM` 匹配的 terminfo**（例如 `xterm-ghostty`），否则可能出现光标移动、重绘异常或看似重复输入的字符。检查和修复方法见 [Ghostty SSH 兼容性说明](.agents/skills/dotfile/references/packages/ghostty.md)。在客户端终端中选用 Nerd Font 即可显示 NvChad 图标。Shell 集成保留存在性检查，缺少依赖不会阻止 Shell 启动，但 `dotfile-doctor` 会将缺失的必装工具或 Zsh 插件报告为失败。保留 Vim 配置供偶尔使用。
 
 仓库包含最小化 NvChad 配置，使用共享插件锁文件，支持 SSH 下的 OSC 52 剪贴板和普通 `y` / `d` / `p` 操作。Ghostty 选中文字时不再自动复制。启动、插件同步和 tmux 限制见 [NvChad 说明](.agents/skills/dotfile/references/packages/nvchad.md)。
 
@@ -57,7 +57,7 @@ GitHub CLI（`gh`）和 Ghostty 保持推荐、选装。**Ghostty 和 Nerd Font 
 
 ## 环境体检
 
-部署配置后打开新 Shell，运行 `dotfile-doctor`。命令由 `~/.config/shell/doctor.zsh` 定义，默认检查 `$HOME` 下的工具、兼容版本、配置文件和共享 Agent 符号链接。检查源码仓库可运行 `dotfile-doctor /path/to/dotfile`。
+部署配置后打开新 Shell，运行 `dotfile-doctor`。命令由 `~/.config/shell/doctor.zsh` 定义，默认检查 `$HOME` 下的工具、兼容版本、SSH 终端能力（terminfo）、配置文件和共享 Agent 符号链接。检查源码仓库可运行 `dotfile-doctor /path/to/dotfile`。
 
 缺少必需依赖或配置无效时返回非零退出码；缺少可选工具只提示，不判失败。命令不会安装工具或修改配置。
 

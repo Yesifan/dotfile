@@ -44,7 +44,7 @@ Required tools (installation still requires your consent):
 - **Shell experience**: Starship (prompt), zoxide (directory jumping), fzf (fuzzy search), zsh-autosuggestions (history suggestions), and zsh-syntax-highlighting (syntax highlighting).
 - **Server utilities**: tmux >= 3.5 (persistent sessions), ripgrep (`rg`, content search), fd (file search; `fdfind` is also accepted), and jq (JSON processing).
 
-GitHub CLI (`gh`) and Ghostty remain recommended, optional tools. **Ghostty and Nerd Fonts are installed only on the client that runs the graphical terminal; headless SSH servers do not need either.** Select the Nerd Font in the client terminal to display NvChad icons. Shell integrations retain availability guards so missing dependencies do not prevent the shell from starting, but `dotfile-doctor` reports missing required tools or Zsh plugins as failures. Vim configuration remains available for occasional use.
+GitHub CLI (`gh`) and Ghostty remain recommended, optional tools. **Ghostty and Nerd Fonts are installed only on the client that runs the graphical terminal; headless SSH servers do not need either.** The server **does need terminfo matching the SSH `$TERM`** (such as `xterm-ghostty`); missing entries can cause broken cursor movement and shell redraw. See the [Ghostty SSH compatibility checks and repair](.agents/skills/dotfile/references/packages/ghostty.md). Select the Nerd Font in the client terminal to display NvChad icons. Shell integrations retain availability guards so missing dependencies do not prevent the shell from starting, but `dotfile-doctor` reports missing required tools or Zsh plugins as failures. Vim configuration remains available for occasional use.
 
 The repo includes a minimal NvChad configuration with a shared plugin lockfile, OSC 52 clipboard support over SSH, and ordinary `y` / `d` / `p` operations. Ghostty selection does not automatically copy text. See the [NvChad setup notes](.agents/skills/dotfile/references/packages/nvchad.md) for startup, plugin synchronization, and tmux limitations.
 
@@ -60,7 +60,7 @@ Follow an existing project's explicit tool configuration and lockfiles first. Th
 
 ## Environment check
 
-Open a new shell after deploying the configuration, then run `dotfile-doctor`. The command is defined in `~/.config/shell/doctor.zsh` and checks tools, supported versions, configuration files, and shared agent symlinks under `$HOME`. To check a source checkout, run `dotfile-doctor /path/to/dotfile`.
+Open a new shell after deploying the configuration, then run `dotfile-doctor`. The command is defined in `~/.config/shell/doctor.zsh` and checks tools, supported versions, SSH terminal capabilities (terminfo), configuration files, and shared agent symlinks under `$HOME`. To check a source checkout, run `dotfile-doctor /path/to/dotfile`.
 
 Missing required dependencies or invalid configuration return a nonzero exit status. Missing optional tools are reported without failing the check. The command does not install or modify anything.
 

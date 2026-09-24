@@ -35,6 +35,10 @@ These rules also cover prerequisites for skill synchronization: if Node.js, pnpm
 
 For NvChad, explain plugin downloads and missing prerequisites on the machine running Neovim, including a compiler, make, and tree-sitter CLI; see [nvchad.md](packages/nvchad.md). Ghostty and Nerd Fonts belong only on the client running the graphical terminal, not on a headless SSH server. Do not include either in a headless server dependency plan or treat their absence there as a failure. On the client, include any needed font installation and terminal selection in the approval request.
 
+## SSH terminal compatibility (required when using SSH)
+
+A headless server still needs a terminfo entry matching the actual SSH `$TERM` (for example, `xterm-ghostty`), plus `tmux-256color` when used inside tmux. This is terminal capability data, not the Ghostty application or a font. Check it on initial installation and every update with `infocmp` and `tput`; missing check tools or entries must be included in the dependency consent plan. `tic` is needed only when compiling an entry. Follow the [Ghostty SSH checks and repair instructions](packages/ghostty.md); do not assume automatic SSH integration has installed the entry.
+
 ## Optional choices
 
 Present the tools relevant to the target machine; this is a selection menu, not an installation command.

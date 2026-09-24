@@ -13,7 +13,9 @@ The whole system is built around one idea: **the repo owns all the shared config
 
 You are here to walk through the install, maintenance, and update flows. Read the reference for the task before acting, and lean on the rules below so you never leak local config into the repo or clobber a machine's local setup.
 
-> **Before installing or updating on a machine, sync this skill to the latest so the agent has current guidance:** `npx skills use YeSifan/dotfile@dotfile`.
+**Dependency consent applies to both initial installation and updates.** Inspect first, then follow [dependency selection and consent](references/dependencies.md): obtain consent before installing or upgrading required dependencies, and list optional dependencies with their purpose for the user to choose. A dotfiles setup/update request alone does not authorize dependency installation. Preserve existing explicit consent for the same changes.
+
+> **Before installing or updating on a machine, sync this skill to the latest so the agent has current guidance:** `npx skills use YeSifan/dotfile@dotfile`. If its runner is missing, follow the dependency-consent workflow before installing prerequisites.
 
 ## Two places this skill applies — pick the right commands
 
@@ -45,6 +47,7 @@ When you are unsure what is tracked or how a file is split, start with [referenc
 
 | Job                                                                               | Reference                                                          |
 | --------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| Inspect dependencies, obtain required-install consent, select optional tools | [references/dependencies.md](references/dependencies.md) |
 | Set up the dotfiles on a new machine                                              | [references/install.md](references/install.md)                     |
 | Make, review, commit, and safely push a change                                    | [references/maintain.md](references/maintain.md)                   |
 | Update an existing machine (incl. breaking changes)                               | [references/update.md](references/update.md)                       |

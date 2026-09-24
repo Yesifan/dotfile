@@ -1,5 +1,11 @@
 # Dotfiles
 
+把下面这段话发给你的 AI Agent，即可开始安装或更新：
+
+```text
+请先运行 npx skills use YeSifan/dotfile@dotfile，阅读并遵循该 skill 的指导，根据当前机器状态安装或更新 dotfile。
+```
+
 使用 bare Git 仓库管理（`$HOME/.cfg`），别名 `dgit`。兼容 macOS 和 Linux。
 
 仓库保存所有共享配置。每台机器的密钥、路径、个人设置都不进仓库。追踪文件里可以带一个 **LOCAL 块**标记机器本地内容：仓库里该书为空模板，由每台机器自行填写。LOCAL 块里的内容永不推送。
@@ -34,6 +40,8 @@ LOCAL 块内是机器本地内容（pull/rebase 时保留、推送前剥离）�
 推荐：`starship`、`zoxide`、`fzf`、`zsh-autosuggestions`、`zsh-syntax-highlighting`、`tmux`（安装时须 >= 3.5）、`ripgrep`、`fd`、`jq`、`gh`（GitHub CLI）、Ghostty。可选 Shell 集成均有存在性检查，未安装时也能启动 Shell。保留 Vim 配置供偶尔使用。
 
 仓库包含最小化 NvChad 配置，使用共享插件锁文件，支持 SSH 下的 OSC 52 剪贴板和普通 `y` / `d` / `p` 操作。Ghostty 选中文字时不再自动复制。启动、插件同步和 tmux 限制见 [NvChad 说明](.agents/skills/dotfile/references/packages/nvchad.md)。
+
+对于向网络开放 SSH 的 Linux 服务器，另推荐 **Fail2ban**，在重复认证失败后临时封禁来源 IP。它是服务器端可选工具，推荐配置见 [Fail2ban 说明](.agents/skills/dotfile/references/packages/fail2ban.md)。
 
 ## 包管理工具偏好
 

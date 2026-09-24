@@ -1,5 +1,11 @@
 # Dotfiles
 
+To install or update these dotfiles, send the following to your AI agent:
+
+```text
+First run npx skills use YeSifan/dotfile@dotfile, then read and follow the skill's instructions to install or update the dotfiles based on this machine's current setup.
+```
+
 Managed with a bare Git repository at `$HOME/.cfg`, aliased as `dgit`. Works on macOS and Linux.
 
 The repo owns all the shared config. Each machine's secrets, paths, and personal settings stay out of it. A tracked file may carry a **LOCAL block** that marks its machine-local content; the repo ships the block empty and each machine fills it in. Nothing inside a LOCAL block is ever pushed.
@@ -37,6 +43,8 @@ Required: **Neovim >= 0.11** (the default `EDITOR` and `VISUAL`) and **git-delta
 Recommended: `starship`, `zoxide`, `fzf`, `zsh-autosuggestions`, `zsh-syntax-highlighting`, `tmux` (>= 3.5 if installed), `ripgrep`, `fd`, `jq`, `gh` (GitHub CLI), and Ghostty. Optional shell integrations are guarded so the shell can start before these tools are installed. Vim configuration remains available for occasional use.
 
 The repo includes a minimal NvChad configuration with a shared plugin lockfile, OSC 52 clipboard support over SSH, and ordinary `y` / `d` / `p` operations. Ghostty selection does not automatically copy text. See the [NvChad setup notes](.agents/skills/dotfile/references/packages/nvchad.md) for startup, plugin synchronization, and tmux limitations.
+
+For Linux servers with SSH exposed to the network, **Fail2ban** is also recommended to temporarily ban source IPs after repeated authentication failures. It is optional and configured on the server; see the [recommended SSH jail configuration](.agents/skills/dotfile/references/packages/fail2ban.md).
 
 ## Package management preferences
 

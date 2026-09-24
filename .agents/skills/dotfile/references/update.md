@@ -2,7 +2,7 @@
 
 > **Scope:** this reference is for the **production / machine path** (`dgit`, bare repo at `$HOME/.cfg`, work-tree `$HOME`). If you are in the dotfiles **source repo** (a normal clone), update with plain `git pull --rebase origin main` instead.
 
-Bring a machine already running these dotfiles up to date. Before you start, sync this skill to the latest so you have the most current update/migration steps: `npx skills use YeSifan/dotfile@dotfile`.
+Bring a machine already running these dotfiles up to date. Before you start, read [dependencies.md](dependencies.md) and sync this skill to the latest so you have the most current update/migration steps: `npx skills use YeSifan/dotfile@dotfile`. Check that its runtime and package manager are available first; if either is missing, follow the dependency consent flow before installing it. Do not silently bootstrap a runtime or package manager to sync the skill.
 
 The path depends on whether the machine has a LOCAL commit, whether the work-tree is dirty, and whether the incoming change is breaking.
 
@@ -34,7 +34,7 @@ dgit pull --rebase origin main
 
 After pulling:
 
-- Install any tools new to this platform (see [install.md](install.md)).
+- Follow the shared dependency review and consent flow under **After the update** before installing any tools new to this platform.
 - On Ubuntu the apt `fzf` may be too old for `fzf --zsh`; `.zshrc` falls back to the package's example scripts, so no action is needed.
 - If old oh-my-zsh files linger, remove them:
 
@@ -44,7 +44,7 @@ After pulling:
 
 - The tracked `~/.vimrc` is the Vim entrypoint; no symlink is required.
 - If the update is breaking, run the migration plan from [migrations/readme.md](migrations/readme.md) first.
-- Reload and verify: `exec zsh -l`, then `dgit status --short` should be clean.
+- Continue to **After the update** before reloading the shell.
 
 ## Case B — machine has a LOCAL commit
 
@@ -129,6 +129,9 @@ dgit reset --hard origin/main
 
 ## After the update
 
-- `exec zsh -l` loads without errors.
-- `dgit status --short` is clean for tracked files.
-- If the update was breaking, confirm the migration completed before reloading.
+Complete these steps after **every path (Case A, B, or C)**, including conflict recovery:
+
+1. **Inspect dependencies without installing or upgrading them.** Follow [dependencies.md](dependencies.md): check installed tools and versions against the updated configuration and migration requirements. Use the read-only checks in [install.md](install.md) and `dotfile-doctor` when available.
+2. **Present a concrete dependency plan before package changes.** List missing or outdated required dependencies, their purpose, and the proposed installation or upgrade. Obtain the user's consent even for required dependencies. Separately list optional dependencies with their purpose and let the user choose which to install or upgrade. An ordinary request to update dotfiles is not permission to install or upgrade dependencies; existing explicit consent covering this exact plan need not be requested again. Do not perform a blanket upgrade of optional tools just because configurations changed.
+3. **Apply only the approved dependency changes.** Skip unselected optional dependencies. If the user declines a required dependency, explain which functionality is affected, leave the environment marked incomplete, and do not blindly reload configurations that depend on it.
+4. **Verify before loading the updated configuration.** Confirm any breaking-change migration is complete and required dependencies are satisfied before running `exec zsh -l` or starting the affected tools. Check that the shell loads without errors and `dgit status --short` is clean for tracked files. Report any declined or unresolved required dependencies instead of declaring the environment ready.
